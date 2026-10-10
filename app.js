@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "0.3.42";
+  const VERSION = "0.3.43";
   const CONFIG_KEY = "murdoku-general:config:v1";
   const PROGRESS_KEY = "murdoku-general:progress:v1";
   const LAYOUT_KEY = "murdoku-general:layout:v1";
@@ -93,7 +93,7 @@ function rgbaFromHex(hex, alpha=.18){
     playScreen: $("#playScreen"), sidebar: $("#sidebar"), sidebarResizer: $("#sidebarResizer"), topbarResizer: $("#topbarResizer"),
     suspectList: $("#suspectList"), redistributeColors: $("#redistributeColorsBtn"), noteSymbols: $("#noteSymbols"), placedCount: $("#placedCount"), boardArea: $("#boardArea"), boardWrap: $("#boardWrap"), boardImage: $("#boardImage"), boardPlaceholder: $("#boardPlaceholder"), grid: $("#gridOverlay"), rowLabels: $("#rowLabels"), colLabels: $("#colLabels"),
     undo: $("#undoBtn"), redo: $("#redoBtn"), clearSelected: $("#clearSelectedBtn"), eraser: $("#eraserBtn"), reset: $("#resetBtn"), coords: $("#coordsBtn"), darkView: $("#darkViewBtn"), help: $("#helpBtn"), check: $("#checkBtn"), availableCells: $("#availableCellsCount"), availableTotal: $("#availableCellsTotal"), status: $("#status"), exportProgress: $("#exportProgressBtn"), importProgress: $("#importProgressInput"), helpDialog: $("#helpDialog"),
-    setupScreen: $("#setupScreen"), newPuzzle: $("#newPuzzleBtn"), cancelSetup: $("#cancelSetupBtn"), saveSetup: $("#saveSetupBtn"), setupTitle: $("#setupTitle"), setupRows: $("#setupRows"), setupCols: $("#setupCols"), setupSuspectCount: $("#setupSuspectCount"), applySuspectCount: $("#applySuspectCountBtn"), setupImageUrl: $("#setupImageUrl"), setupImageFile: $("#setupImageFile"), clearImage: $("#clearImageBtn"), imageStorageNote: $("#imageStorageNote"),
+    setupScreen: $("#setupScreen"), setupHelp: $("#setupHelpBtn"), setupHelpDialog: $("#setupHelpDialog"), newPuzzle: $("#newPuzzleBtn"), cancelSetup: $("#cancelSetupBtn"), saveSetup: $("#saveSetupBtn"), setupTitle: $("#setupTitle"), setupRows: $("#setupRows"), setupCols: $("#setupCols"), setupSuspectCount: $("#setupSuspectCount"), applySuspectCount: $("#applySuspectCountBtn"), setupImageUrl: $("#setupImageUrl"), setupImageFile: $("#setupImageFile"), clearImage: $("#clearImageBtn"), imageStorageNote: $("#imageStorageNote"),
     insetLeft: $("#insetLeft"), insetTop: $("#insetTop"), insetRight: $("#insetRight"), insetBottom: $("#insetBottom"), annotationScale: $("#annotationScale"), annotationScaleValue: $("#annotationScaleValue"), editorModes: $("#editorModeButtons"), perspectiveTools: $("#perspectiveTools"), resetPerspective: $("#resetPerspectiveBtn"), applyPerspective: $("#applyPerspectiveBtn"), perspectiveStatus: $("#perspectiveStatus"), blockedTools: $("#blockedTools"), clearBlocked: $("#clearBlockedBtn"),
     previewArea: $("#setupPreviewArea"), previewWrap: $("#setupPreviewWrap"), previewImage: $("#setupPreviewImage"), previewPlaceholder: $("#setupPreviewPlaceholder"), perspectiveOverlay: $("#perspectiveOverlay"), perspectivePolygon: $("#perspectivePolygon"), perspectiveHandles: $("#perspectiveHandles"), setupGridBox: $("#setupGridBox"), setupGrid: $("#setupGridOverlay"), previewModeLabel: $("#previewModeLabel"), previewInfo: $("#previewInfo")
   };
@@ -1096,6 +1096,7 @@ function rgbaFromHex(hex, alpha=.18){
 
   function wireSetup(){
     el.setupBtn.addEventListener("click",openSetup);
+    el.setupHelp.addEventListener("click",()=>el.setupHelpDialog.showModal());
     el.newPuzzle.addEventListener("click",newPuzzle);
     el.cancelSetup.addEventListener("click",closeSetup);
     el.saveSetup.addEventListener("click",saveSetup);
