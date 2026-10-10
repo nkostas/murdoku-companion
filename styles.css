@@ -968,3 +968,21 @@ body.dark-view .suspect-list .suspect.suspect-entry > svg.suspect-ribbon-mark pa
 .rename-dialog input {width:100%;font:700 20px system-ui,sans-serif;text-transform:uppercase;padding:8px 10px;box-sizing:border-box;border:1px solid var(--line);border-radius:7px;color:var(--text);background:var(--panel)}
 .rename-dialog .rename-actions {display:flex;justify-content:flex-end;gap:9px;margin-top:4px}
 body.dark-view .rename-dialog input {background:#293440;color:var(--text)}
+
+/* v0.3.43 — directly visible marker scale and in-app New/Edit + Play guides. */
+.marker-size-card .annotation-scale-row { margin:5px 0 3px; }
+.marker-size-card .annotation-scale-row output { color:var(--text); }
+.user-guide-dialog { width:min(680px,calc(100vw - 24px)); max-width:680px; max-height:min(85vh,820px); padding:0; overflow:hidden; background:var(--panel); color:var(--text); }
+.user-guide-dialog .guide-dialog-card { display:flex; flex-direction:column; gap:12px; max-height:min(85vh,820px); padding:17px 19px; }
+.user-guide-dialog .dialog-head { flex:none; gap:12px; }
+.user-guide-dialog .dialog-head h2 { margin:0; font-size:1.15rem; }
+.user-guide-dialog .user-guide-content { overflow-y:auto; min-height:0; line-height:1.52; padding-right:5px; }
+.user-guide-dialog .user-guide-content h3 { margin:14px 0 6px; font-size:.91rem; }
+.user-guide-dialog .user-guide-content p { margin:0 0 9px; }
+.user-guide-dialog .user-guide-content ul { margin:2px 0 10px; padding-left:21px; }
+.user-guide-dialog .user-guide-content li { margin-bottom:6px; }
+.user-guide-dialog .guide-close { flex:none; align-self:flex-end; min-width:90px; }
+@media (max-width:600px) {
+  .user-guide-dialog .guide-dialog-card { padding:12px 14px; }
+  .user-guide-dialog .dialog-head h2 { font-size:1rem; }
+}
