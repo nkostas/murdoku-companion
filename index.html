@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Murdoku Companion</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar" id="topbar">
+    <div class="topbar-title">
+      <span class="eyebrow">MURDOKU COMPANION</span>
+      <h1 id="puzzleTitle">New Puzzle</h1>
+    </div>
+    <div class="topbar-actions">
+      <button id="setupBtn" class="ghost compact" type="button">New / Edit</button>
+      <span id="versionBadge" class="version-badge">v0.3.42</span>
+    </div>
+    <div id="topbarResizer" class="topbar-resizer" role="separator" aria-orientation="horizontal" tabindex="0" title="Drag to resize height"></div>
+  </header>
+
+  <main id="playScreen" class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="panel-heading">
+        <div>
+          <h2>Suspects</h2>
+          <p>Left: select · Right: shared ribbon · Ctrl: color · Shift: gender · Hold: rename.</p>
+        </div>
+        <span id="placedCount" class="counter">0/0</span>
+      </div>
+      <div class="suspect-toolbar">
+        <button id="redistributeColorsBtn" class="palette-button" type="button" title="Redistribute colors across the full spectrum">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 7v5h-5"/><path d="M4 17v-5h5"/><path d="M5.4 9a7.5 7.5 0 0 1 13.1-2L20 12M4 12l1.5 5a7.5 7.5 0 0 0 13.1-2"/></svg>
+          <span>Redistribute colors</span>
+        </button>
+      </div>
+      <div id="suspectList" class="suspect-list"></div>
+      <section class="note-symbols-panel" aria-label="Note symbols">
+        <div class="note-symbols-title">NOTE SYMBOLS</div>
+        <div id="noteSymbols" class="note-symbols"></div>
+      </section>
+      <div id="sidebarResizer" class="sidebar-resizer" role="separator" aria-orientation="vertical" tabindex="0" title="Drag to resize width"></div>
+    </aside>
+
+    <section class="board-section">
+      <div class="board-workspace">
+        <div id="boardArea" class="board-area">
+          <div id="boardWrap" class="board-wrap">
+            <div id="boardPlaceholder" class="board-placeholder">No puzzle image has been set.<br>Open New / Edit.</div>
+            <img id="boardImage" alt="Puzzle image" draggable="false" />
+            <div id="gridOverlay" class="grid-overlay"></div>
+            <div id="rowLabels" class="coords-layer"></div>
+            <div id="colLabels" class="coords-layer"></div>
+          </div>
+        </div>
+
+        <aside class="board-controls">
+          <section class="control-group">
+            <h3>Edit</h3>
+            <div class="button-grid two">
+              <button id="undoBtn" type="button">↶ Undo</button>
+              <button id="redoBtn" type="button">↷ Redo</button>
+              <button id="eraserBtn" class="span-two icon-tool-button toggle-tool" type="button" aria-label="Eraser" title="Eraser" aria-pressed="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M4.5 15.5 13.8 6.2a2 2 0 0 1 2.8 0l1.2 1.2a2 2 0 0 1 0 2.8l-8.3 8.3H6.6l-2.1-2.1a1.3 1.3 0 0 1 0-1.9Z"/>
+                  <path d="m11.3 8.7 4 4M9.5 18.5H20"/>
+                </svg>
+              </button>
+              <button id="clearSelectedBtn" class="span-two" type="button" title="Clear selected suspect">Clear selected suspect</button>
+              <button id="resetBtn" class="danger span-two" type="button">Reset progress</button>
+            </div>
+          </section>
+
+          <section class="control-group">
+            <h3>View</h3>
+            <div class="button-grid two">
+              <button id="coordsBtn" class="ghost" type="button">Coordinates</button>
+              <button id="helpBtn" class="ghost" type="button">Help</button>
+              <button id="darkViewBtn" class="ghost span-two view-toggle" type="button" aria-pressed="false">Dark view</button>
+            </div>
+          </section>
+
+          <section class="control-group">
+            <h3>Puzzle</h3>
+            <div class="available-positions" title="Cells without a blocked mark, X, suspect or note symbol, including automatic row/column exclusions" aria-live="polite" aria-atomic="true">
+              <span class="available-positions-label">Available positions</span>
+              <span class="available-positions-value"><strong id="availableCellsCount">0</strong><span class="available-positions-total" id="availableCellsTotal"> / 0</span></span>
+            </div>
+            <button id="checkBtn" class="primary full" type="button">Check</button>
+            <div id="status" class="status" role="status"></div>
+          </section>
+
+          <section class="control-group">
+            <h3>Data</h3>
+            <div class="button-stack">
+              <button id="exportProgressBtn" type="button">Export</button>
+              <label class="file-button">Import<input id="importProgressInput" type="file" accept="application/json,.json" /></label>
+            </div>
+            <p class="small-note">Export saves the puzzle and current play progress in one file.</p>
+          </section>
+
+          <section class="control-group">
+            <h3>Controls</h3>
+            <p class="small-note">Suspects: left click anywhere to select; right click applies the last-used ribbon or cycles the current ribbon; Ctrl+click cycles ribbon colors; Shift+click cycles gender; long left press changes the letter.</p>
+            <div class="gesture-list">
+              <div><b>Left click</b><span>candidate</span></div>
+              <div><b>Left drag</b><span>multiple candidates</span></div>
+              <div><b>Right drag</b><span>X</span></div>
+              <div><b>Long left</b><span>place</span></div>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <section id="setupScreen" class="setup-screen hidden" aria-label="New / Edit">
+    <header class="setup-header">
+      <div>
+        <span class="eyebrow">PUZZLE EDITOR</span>
+        <h2>New / Edit</h2>
+      </div>
+      <div class="setup-header-actions">
+        <button id="newPuzzleBtn" type="button">New Puzzle</button>
+        <button id="cancelSetupBtn" class="ghost" type="button">Cancel</button>
+        <button id="saveSetupBtn" class="primary" type="button">Save & Play</button>
+      </div>
+    </header>
+
+    <div class="setup-body">
+      <aside class="setup-form">
+        <section class="setup-card">
+          <h3>Basic information</h3>
+          <label>Title<input id="setupTitle" type="text" maxlength="120" placeholder="If empty, the image filename will be used" /></label>
+
+          <div class="preset-label">Puzzle size presets</div>
+          <div class="preset-size-buttons" aria-label="Puzzle size presets">
+            <button type="button" data-preset-size="6">6 × 6</button>
+            <button type="button" data-preset-size="9">9 × 9</button>
+            <button type="button" data-preset-size="16">16 × 16</button>
+          </div>
+
+          <div class="field-row three">
+            <label>Rows<input id="setupRows" type="number" min="1" max="60" /></label>
+            <label>Columns<input id="setupCols" type="number" min="1" max="60" /></label>
+            <label>Suspects<input id="setupSuspectCount" type="number" min="1" max="52" /></label>
+          </div>
+          <button id="applySuspectCountBtn" class="full" type="button">Apply</button>
+          <p class="small-note">Presets fill the three fields. You can change any value before pressing Apply.</p>
+        </section>
+
+        <section class="setup-card">
+          <h3>Image</h3>
+          <label>Image URL<input id="setupImageUrl" type="text" placeholder="https://… or leave empty" /></label>
+          <div class="button-stack">
+            <label class="file-button">Choose local image<input id="setupImageFile" type="file" accept="image/*" /></label>
+            <button id="clearImageBtn" class="ghost" type="button">Remove image</button>
+          </div>
+          <p id="imageStorageNote" class="small-note"></p>
+        </section>
+
+        <section class="setup-card">
+          <h3>Grid & editor</h3>
+          <p class="small-note">Drag the four grid edges in the preview or enter exact values.</p>
+          <div class="field-row four">
+            <label>Left %<input id="insetLeft" type="number" min="0" max="45" step="0.01" /></label>
+            <label>Top %<input id="insetTop" type="number" min="0" max="45" step="0.01" /></label>
+            <label>Right %<input id="insetRight" type="number" min="0" max="45" step="0.01" /></label>
+            <label>Bottom %<input id="insetBottom" type="number" min="0" max="45" step="0.01" /></label>
+          </div>
+
+          <h4>Editor mode</h4>
+          <div class="segmented editor-modes" id="editorModeButtons">
+            <button data-mode="perspective" type="button">Perspective</button>
+            <button data-mode="calibrate" class="active" type="button">Calibration</button>
+            <button data-mode="blocked" type="button">Blocked cells</button>
+          </div>
+
+          <div id="perspectiveTools" class="mode-tools hidden">
+            <div class="button-grid two">
+              <button id="resetPerspectiveBtn" type="button">Reset corners</button>
+              <button id="applyPerspectiveBtn" class="primary" type="button">Rectify image</button>
+            </div>
+            <p class="small-note">Drag the four corners to the real corners of the grid. Rectify Image transforms the selected quadrilateral into a rectangle.</p>
+            <p class="small-note">The corrected image uses the Columns : Rows aspect ratio so grid cells are square.</p>
+            <p id="perspectiveStatus" class="small-note perspective-status"></p>
+          </div>
+
+          <div id="blockedTools" class="mode-tools hidden">
+            <button id="clearBlockedBtn" class="danger full" type="button">Clear all blocked cells</button>
+            <p class="small-note"><strong>Left click / drag:</strong> start on a free cell to add blocks, or start on a blocked cell to remove blocks. <strong>Right click:</strong> disabled.</p>
+            <p class="small-note">Optional. Leave empty if blocked cells are not known.</p>
+          </div>
+        </section>
+
+        <details class="setup-card advanced-settings-card">
+          <summary>Advanced settings</summary>
+          <div class="advanced-content">
+            <label>Marker &amp; symbol size
+              <div class="annotation-scale-row">
+                <input id="annotationScale" type="range" min="70" max="150" step="5" value="100" />
+                <output id="annotationScaleValue">100%</output>
+              </div>
+            </label>
+            <p class="small-note">Changes the size of suspect letters and note symbols on the grid.</p>
+          </div>
+        </details>
+      </aside>
+
+      <section class="setup-preview-panel">
+        <div class="preview-toolbar">
+          <strong id="previewModeLabel">Grid calibration</strong>
+          <span id="previewInfo"></span>
+        </div>
+        <div id="setupPreviewArea" class="setup-preview-area">
+          <div id="setupPreviewWrap" class="setup-preview-wrap">
+            <div id="setupPreviewPlaceholder" class="board-placeholder">Choose an image or use the grid without an image.</div>
+            <img id="setupPreviewImage" alt="Puzzle preview" draggable="false" />
+            <svg id="perspectiveOverlay" class="perspective-overlay hidden" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              <polygon id="perspectivePolygon" points="0,0 100,0 100,100 0,100"></polygon>
+            </svg>
+            <div id="perspectiveHandles" class="perspective-handles hidden">
+              <button type="button" class="perspective-handle" data-corner="tl" aria-label="Top-left corner"><span>TL</span></button>
+              <button type="button" class="perspective-handle" data-corner="tr" aria-label="Top-right corner"><span>TR</span></button>
+              <button type="button" class="perspective-handle" data-corner="br" aria-label="Bottom-right corner"><span>BR</span></button>
+              <button type="button" class="perspective-handle" data-corner="bl" aria-label="Bottom-left corner"><span>BL</span></button>
+            </div>
+            <div id="setupGridBox" class="setup-grid-box">
+              <div id="setupGridOverlay" class="setup-grid-overlay"></div>
+              <div class="cal-handle top" data-edge="top"></div>
+              <div class="cal-handle bottom" data-edge="bottom"></div>
+              <div class="cal-handle left" data-edge="left"></div>
+              <div class="cal-handle right" data-edge="right"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <dialog id="helpDialog">
+    <form method="dialog" class="dialog-card">
+      <div class="dialog-head"><h2>How to play</h2><button class="icon-close" value="close">×</button></div>
+      <ul>
+        <li>At most <strong>one suspect</strong> may be placed in each row and column. Some rows or columns may remain empty.</li>
+        <li><strong>Left click:</strong> add or remove a candidate position.</li>
+        <li><strong>Left drag:</strong> add or remove multiple candidate positions. The first cell determines the action.</li>
+        <li><strong>Right click / drag:</strong> add or remove a global X, independent of the selected suspect.</li>
+        <li><strong>Long left:</strong> place the selected suspect or note symbol. The rest of its row and column are excluded automatically.</li>
+        <li>Candidate positions for all suspects remain visible.</li>
+        <li><strong>Suspect cards:</strong> Left click selects; right click applies the last-used ribbon or cycles the current ribbon; Ctrl+click cycles ribbon colors; Shift+click cycles gender; long press changes the letter.</li>
+        <li>Blocked cells are optional and are only needed when they are known.</li>
+      </ul>
+      <button class="primary" value="close">Close</button>
+    </form>
+  </dialog>
+
+  <dialog id="renameSuspectDialog" class="rename-dialog" aria-labelledby="renameSuspectTitle">
+    <form id="renameSuspectForm" method="dialog">
+      <h3 id="renameSuspectTitle">Change suspect letter</h3>
+      <p>Change the letter of <strong id="renameSuspectCurrent"></strong>.</p>
+      <label for="renameSuspectInput">New letter</label>
+      <input id="renameSuspectInput" type="text" maxlength="2" autocomplete="off" spellcheck="false" required />
+      <p id="renameSuspectHelp" class="small-note"></p>
+      <div class="rename-actions">
+        <button id="renameSuspectCancel" type="button">Cancel</button>
+        <button type="submit" class="primary">Apply letter</button>
+      </div>
+    </form>
+  </dialog>
+  <script src="app.js"></script>
+
+</body>
+</html>

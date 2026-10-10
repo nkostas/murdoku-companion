@@ -1,0 +1,970 @@
+:root{
+  --bg:#f4f0e8;--panel:#fffdf8;--line:#d8d0c2;--text:#25211d;--muted:#70685f;
+  --green:#2f715d;--green2:#e8f2ee;--danger:#a23e35;--shadow:0 4px 18px rgba(41,33,24,.10);
+  --sidebar-width:420px;--topbar-height:48px;--controls-width:232px;
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit;color:inherit}button,.file-button{border:1px solid var(--line);background:#fffdf9;border-radius:9px;padding:7px 10px;font-weight:700;cursor:pointer}button:hover,.file-button:hover{background:#f6f1e8}button:disabled{opacity:.45;cursor:not-allowed}.primary{background:var(--green);color:#fff;border-color:var(--green)}.primary:hover{background:#285f4f}.ghost{background:transparent}.danger{color:var(--danger)}.full{width:100%}.compact{padding:6px 9px}.hidden{display:none!important}
+.topbar{height:var(--topbar-height);min-height:32px;max-height:180px;padding:5px 12px;background:var(--panel);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;position:relative;z-index:20}.topbar-title{min-width:0}.eyebrow{display:block;font-size:.62rem;letter-spacing:.09em;color:var(--muted);font-weight:800}.topbar h1{font-size:1.02rem;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.topbar-actions{display:flex;align-items:center;gap:8px}.version-badge,.counter{display:inline-flex;align-items:center;justify-content:center;background:#e6efe9;color:#215847;border-radius:999px;padding:3px 8px;font-size:.78rem;font-weight:900}.topbar-resizer{position:absolute;left:0;right:0;bottom:-4px;height:8px;cursor:ns-resize;z-index:25}.topbar-resizer:hover{background:rgba(47,113,93,.18)}
+.app-shell{height:calc(100vh - var(--topbar-height));display:grid;grid-template-columns:var(--sidebar-width) minmax(0,1fr);gap:6px;padding:6px}.sidebar{min-width:210px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px;display:flex;flex-direction:column;min-height:0;position:relative;box-shadow:var(--shadow)}.sidebar-resizer{position:absolute;right:-5px;top:0;bottom:0;width:10px;cursor:ew-resize;z-index:15}.sidebar-resizer:hover{background:rgba(47,113,93,.15)}.panel-heading{display:flex;gap:8px;justify-content:space-between;align-items:flex-start;padding:2px 3px 7px}.panel-heading h2{font-size:1rem;margin:0}.panel-heading p{font-size:.72rem;color:var(--muted);margin:2px 0 0}.suspect-list{min-height:0;overflow:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:7px;align-content:start;padding-right:2px}.suspect{min-height:78px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px;display:grid;grid-template-columns:38px minmax(0,1fr);gap:8px;text-align:left;position:relative}.suspect.active{outline:2px solid var(--suspect-color,#2f715d);background:var(--green2)}.suspect.placed::after{content:"✓";position:absolute;right:7px;top:5px;color:var(--green);font-weight:900}.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;background:var(--suspect-dark,#355);font-weight:900}.suspect-name{font-weight:900;font-size:.83rem;display:block;padding-right:20px}.suspect-clue{display:block;font-size:.72rem;line-height:1.3;color:#5d554d;margin-top:3px;white-space:normal}.suspect-pos{display:block;color:var(--green);font-size:.68rem;font-weight:800;margin-top:4px}
+.board-section{min-width:0;min-height:0;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}.board-workspace{height:100%;display:grid;grid-template-columns:minmax(0,1fr) var(--controls-width);gap:6px;padding:6px}.board-area{min-width:0;min-height:0;display:flex;align-items:flex-start;justify-content:center;overflow:hidden}.board-wrap{position:relative;flex:none;overflow:hidden;background:#eee;border:1px solid #cfc8bd;border-radius:7px;touch-action:none}.board-wrap img,.setup-preview-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:none;pointer-events:none}.board-wrap.has-image img,.setup-preview-wrap.has-image img{display:block}.board-placeholder{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;color:#7a7167;background:repeating-linear-gradient(45deg,#f8f6f1,#f8f6f1 14px,#f0ece4 14px,#f0ece4 28px);font-size:.85rem}.has-image>.board-placeholder{display:none}.grid-overlay{position:absolute;display:grid;z-index:4}.cell{position:relative;border:0;background:transparent;padding:0;min-width:0;min-height:0;overflow:hidden}.cell:hover{box-shadow:inset 0 0 0 2px rgba(255,255,255,.9),inset 0 0 0 4px rgba(33,33,33,.42)}.cell.blocked{cursor:not-allowed;background:rgba(40,40,40,.05)}.candidate-stack{position:absolute;inset:1%;z-index:3;display:grid;grid-template-columns:repeat(var(--stack-cols,3),minmax(0,1fr));grid-template-rows:repeat(var(--stack-rows,3),minmax(0,1fr));align-items:center;justify-items:center;gap:0;pointer-events:none;overflow:hidden}.candidate-token{box-sizing:border-box;display:grid;place-items:center;padding:0;border:0;border-radius:0;background:transparent;line-height:1;font-weight:1000;overflow:visible}.candidate-token.selected{background:var(--token-active-bg,#ffd84d);color:#172434;border-color:#172434}.x-mark{position:absolute;inset:0;display:grid;place-items:center;font-weight:950;line-height:1;pointer-events:none}.auto-x{color:rgba(150,54,46,.68);font-size:clamp(13px,2vw,28px)}.manual-x{color:rgba(150,54,46,.94);font-size:clamp(14px,2.1vw,30px)}.marker{position:absolute;inset:11%;z-index:5;border-radius:50%;display:grid;place-items:center;background:var(--marker-bg,#244a72);color:#fff;border:2px solid #fff;font-weight:950;line-height:1;font-size:clamp(9px,1.2vw,20px);box-shadow:0 2px 7px rgba(0,0,0,.25)}.marker.selected{outline:2px solid #1d4f40}.coords-layer{position:absolute;inset:0;z-index:8;pointer-events:none;display:none}.board-wrap.show-coords .coords-layer{display:block}.coord{position:absolute;background:rgba(255,255,255,.85);border-radius:3px;font-weight:900;font-size:8px;line-height:1;padding:1px 2px;color:#111}.pressing{background:rgba(255,220,80,.18)}
+.board-controls{min-width:0;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:6px}.control-group{border:1px solid var(--line);border-radius:10px;padding:7px;background:#fffdf9}.control-group h3{margin:0 0 6px;font-size:.68rem;letter-spacing:.07em;text-transform:uppercase;color:#756b60}.gesture-list{display:grid;gap:4px}.gesture-list div{border:1px solid var(--line);border-radius:7px;padding:4px 6px;font-size:.69rem;display:flex;justify-content:space-between;gap:5px}.gesture-list span{color:var(--muted)}.button-grid{display:grid;gap:5px}.button-grid.two{grid-template-columns:1fr 1fr}.span-two{grid-column:1/-1}.button-stack{display:grid;gap:5px}.file-button{display:block;text-align:center}.file-button input{display:none}.status{font-size:.72rem;line-height:1.3;margin-top:6px;color:var(--muted);min-height:1.2em}.status.good{color:#24634f}.status.error{color:var(--danger)}.small-note{font-size:.68rem;line-height:1.35;color:var(--muted);margin:6px 0 0}
+.setup-screen{position:fixed;inset:0;background:var(--bg);z-index:100;display:flex;flex-direction:column}.setup-header{height:58px;flex:none;background:var(--panel);border-bottom:1px solid var(--line);padding:7px 14px;display:flex;justify-content:space-between;align-items:center}.setup-header h2{font-size:1.05rem;margin:0}.setup-header-actions{display:flex;gap:7px}.setup-body{min-height:0;flex:1;display:grid;grid-template-columns:minmax(310px,440px) minmax(0,1fr);gap:7px;padding:7px}.setup-form{min-height:0;overflow:auto;display:flex;flex-direction:column;gap:7px;padding-right:2px}.setup-card{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:10px;box-shadow:var(--shadow)}.setup-card h3{font-size:.86rem;margin:0 0 8px}.setup-card h4{font-size:.76rem;margin:11px 0 6px}.setup-card summary{font-weight:900;font-size:.86rem;cursor:pointer}.advanced-content{padding-top:7px}.setup-card label{display:grid;gap:3px;font-size:.7rem;font-weight:800;color:#665e56;margin-bottom:7px}.setup-card input,.setup-card select,.setup-card textarea{width:100%;border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 7px}.field-row{display:grid;gap:6px}.field-row.three{grid-template-columns:repeat(3,1fr)}.field-row.four{grid-template-columns:repeat(4,1fr)}.section-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.setup-suspect-list{display:grid;gap:6px;max-height:380px;overflow:auto}.setup-suspect-row{display:grid;grid-template-columns:52px minmax(100px,1fr) minmax(150px,2fr) 42px;gap:5px;align-items:start;border:1px solid #e0d8cc;border-radius:8px;padding:6px;background:#fff}.setup-suspect-row input,.setup-suspect-row textarea{margin:0}.setup-suspect-row textarea{resize:vertical;min-height:54px}.color-input{width:42px!important;height:34px;padding:2px!important}.segmented{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.segmented button.active,.mode-tools button.active{background:#e4efe9;border-color:#6f9d8d;color:#225646}.mode-tools{margin-top:7px}.setup-preview-panel{min-width:0;min-height:0;background:var(--panel);border:1px solid var(--line);border-radius:11px;display:flex;flex-direction:column;overflow:hidden}.preview-toolbar{height:38px;flex:none;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 10px;font-size:.72rem;color:var(--muted)}.setup-preview-area{min-height:0;flex:1;display:flex;align-items:flex-start;justify-content:center;padding:8px;overflow:hidden;background:#ebe6dd}.setup-preview-wrap{position:relative;flex:none;background:#eee;overflow:hidden;border:1px solid #bfb7aa}.setup-grid-box{position:absolute;border:2px solid #eb4d3d;z-index:4}.setup-grid-overlay{position:absolute;inset:0;display:grid}.setup-cell{position:relative;border:.5px solid rgba(25,25,25,.25);background:transparent;min-width:0;min-height:0}.setup-cell.blocked{background:rgba(110,27,21,.42)}.setup-cell.solution{background:rgba(40,126,93,.32)}.solution-label{position:absolute;inset:5%;display:grid;place-items:center;border-radius:50%;background:#1e5f4b;color:#fff;font-size:clamp(7px,1vw,13px);font-weight:900}.cal-handle{position:absolute;background:#eb4d3d;z-index:8}.cal-handle.top,.cal-handle.bottom{height:8px;left:-2px;right:-2px;cursor:ns-resize}.cal-handle.top{top:-5px}.cal-handle.bottom{bottom:-5px}.cal-handle.left,.cal-handle.right{width:8px;top:-2px;bottom:-2px;cursor:ew-resize}.cal-handle.left{left:-5px}.cal-handle.right{right:-5px}.setup-grid-box:not(.calibrate) .cal-handle{display:none}.setup-grid-box.calibrate .setup-grid-overlay{pointer-events:none}
+.dialog-card{padding:18px}.dialog-card ul{padding-left:20px;line-height:1.45}.dialog-head{display:flex;align-items:center;justify-content:space-between}.icon-close{border:0;background:transparent;font-size:1.5rem}dialog{border:0;border-radius:12px;max-width:560px;width:calc(100% - 30px);box-shadow:0 20px 60px rgba(0,0,0,.3)}dialog::backdrop{background:rgba(0,0,0,.4)}
+@media(max-width:900px){:root{--controls-width:190px}.setup-body{grid-template-columns:350px minmax(0,1fr)}.setup-suspect-row{grid-template-columns:44px 1fr 40px}.setup-suspect-row textarea{grid-column:1/-1}.field-row.four{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){html,body{overflow:auto}.topbar{position:sticky;top:0}.app-shell{height:auto;min-height:calc(100vh - var(--topbar-height));grid-template-columns:1fr}.sidebar{min-height:260px}.sidebar-resizer,.topbar-resizer{display:none}.board-workspace{grid-template-columns:1fr}.board-area{min-height:55vh}.board-controls{display:grid;grid-template-columns:1fr 1fr}.setup-screen{position:absolute;min-height:100vh}.setup-body{grid-template-columns:1fr;overflow:auto}.setup-form{overflow:visible}.setup-preview-panel{min-height:65vh}.setup-header{position:sticky;top:0;z-index:10}}
+
+
+/* v0.3.7 setup/editor layout */
+.setup-header{height:auto;min-height:58px;gap:12px;flex-wrap:wrap}
+.setup-header-actions{align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.setup-header-file{display:inline-flex;align-items:center;justify-content:center}
+.setup-body{
+  grid-template-columns:minmax(270px,330px) minmax(0,1fr) minmax(330px,430px);
+  align-items:stretch;
+}
+.setup-form{min-width:0}
+.setup-suspects-panel{
+  min-width:0;min-height:0;overflow:hidden;background:var(--panel);border:1px solid var(--line);
+  border-radius:11px;padding:9px;box-shadow:var(--shadow);display:flex;flex-direction:column;
+}
+.setup-suspects-head{flex:none;padding:1px 2px 8px}
+.setup-suspects-head h3{font-size:.9rem;margin:0}
+.setup-suspects-head p{font-size:.68rem;color:var(--muted);margin:3px 0 0}
+.setup-suspects-panel .setup-suspect-list{max-height:none;min-height:0;flex:1;overflow:auto;padding-right:2px}
+.setup-suspects-panel .setup-suspect-row{
+  grid-template-columns:48px minmax(90px,1fr) 38px;
+  gap:5px;
+}
+.setup-suspects-panel .setup-suspect-row .sclue{grid-column:1/-1;min-height:58px}
+.setup-suspects-panel .color-input{width:38px!important}
+.setup-card h4{margin-top:12px}
+#blockedTools .small-note:first-of-type{margin-top:8px}
+
+@media(max-width:1180px){
+  .setup-body{grid-template-columns:minmax(260px,310px) minmax(0,1fr) minmax(290px,350px)}
+}
+@media(max-width:930px){
+  .setup-body{grid-template-columns:minmax(280px,340px) minmax(0,1fr);overflow:auto}
+  .setup-suspects-panel{grid-column:1/-1;min-height:360px;max-height:48vh}
+  .setup-suspects-panel .setup-suspect-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+}
+@media(max-width:700px){
+  .setup-body{grid-template-columns:1fr}
+  .setup-preview-panel,.setup-suspects-panel{grid-column:1}
+  .setup-suspects-panel{max-height:none;min-height:460px}
+  .setup-suspects-panel .setup-suspect-list{grid-template-columns:1fr}
+  .setup-header-actions{width:100%;justify-content:flex-start}
+}
+
+
+/* v0.3.8 note symbols */
+.suspect-list{flex:1 1 auto;min-height:0}
+.note-symbols-panel{flex:none;border-top:1px solid var(--line);margin-top:8px;padding:8px 3px 2px}
+.note-symbols-title{font-size:.65rem;font-weight:900;letter-spacing:.08em;color:var(--muted);margin:0 0 7px 2px}
+.note-symbols{display:grid;grid-template-columns:repeat(4,minmax(44px,1fr));gap:8px}
+.note-symbol-button{height:56px;min-width:44px;padding:0;border:2px solid #17161d;border-radius:10px;background:#3c3a4a;display:grid;place-items:center;box-shadow:none}
+.note-symbol-button:hover{background:#474557}
+.note-symbol-button.active{outline:3px solid #fff;box-shadow:0 0 0 3px #24212d;background:#504d61}
+.note-glyph{font-size:25px;line-height:1;color:var(--note-color);font-weight:900;text-shadow:0 1px 0 rgba(0,0,0,.65)}
+.candidate-token{color:var(--token-text,#fff)}
+.candidate-token.note-symbol-token{font-family:"Segoe UI Symbol","Arial Unicode MS",sans-serif}
+.candidate-token.note-symbol-token.selected{color:var(--token-text) !important}
+@media(max-width:700px){.note-symbols-panel{position:sticky;bottom:0;background:var(--panel);z-index:3}}
+
+
+/* v0.3.10 — Murdoku-like board notes ------------------------------------ */
+/* Suspect candidates are compact colored letters with a black outline/glow,
+   rather than colored circles. Note symbols intentionally keep their own style. */
+.candidate-token:not(.note-symbol-token){
+  width:var(--token-size) !important;
+  height:var(--token-size) !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  color:var(--candidate-color,#3e78d8) !important;
+  font-size:calc(var(--token-size) * .88) !important;
+  font-weight:1000 !important;
+  line-height:1 !important;
+  overflow:visible !important;
+  -webkit-text-stroke:1px rgba(0,0,0,.96);
+  paint-order:stroke fill;
+  text-shadow:
+    0 0 1px #fff,
+    0 0 4px var(--candidate-glow,#8ab6ff),
+    0 1px 1px rgba(0,0,0,.42);
+  transform:none !important;
+}
+.candidate-token:not(.note-symbol-token).multi-char{
+  font-size:calc(var(--token-size) * .58) !important;
+  letter-spacing:-.04em;
+}
+.candidate-token:not(.note-symbol-token).selected{
+  background:transparent !important;
+  color:var(--candidate-color,#3e78d8) !important;
+  border:0 !important;
+  -webkit-text-stroke:1.45px #050505;
+  text-shadow:
+    0 0 1px #fff,
+    0 0 6px var(--candidate-glow,#8ab6ff),
+    0 0 8px var(--candidate-glow,#8ab6ff);
+  transform:none !important;
+}
+
+/* A hand-entered or automatic X is a large black cross occupying most of the cell. */
+.x-mark{
+  inset:auto !important;
+  left:50% !important;
+  top:50% !important;
+  width:76% !important;
+  height:76% !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  transform:translate(-50%,-50%) !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  color:transparent !important;
+  font-size:0 !important;
+  overflow:visible !important;
+  opacity:1;
+}
+.x-mark::before,.x-mark::after{
+  content:"";
+  position:absolute;
+  left:41%;
+  top:0;
+  width:18%;
+  height:100%;
+  border-radius:6%;
+  background:#050505;
+  box-shadow:0 0 1px rgba(255,255,255,.35);
+  transform-origin:center;
+}
+.x-mark::before{transform:rotate(45deg)}
+.x-mark::after{transform:rotate(-45deg)}
+.auto-x{opacity:.86}
+.manual-x{opacity:1}
+
+/* Final placement: tint the whole cell and show a strong ID badge in the
+   upper-left corner, so the cell clearly reads as occupied without a portrait. */
+.cell.occupied-cell{
+  box-shadow:
+    inset 0 0 0 3px var(--occupied-color,#3568a8),
+    inset 0 0 0 999px color-mix(in srgb,var(--occupied-color,#3568a8) 22%,transparent);
+}
+.cell.occupied-cell .marker{
+  inset:auto !important;
+  left:4% !important;
+  top:4% !important;
+  width:auto !important;
+  height:auto !important;
+  min-width:31% !important;
+  min-height:31% !important;
+  padding:1% 5% !important;
+  border-radius:28% !important;
+  background:var(--marker-bg,#244a72) !important;
+  color:#fff !important;
+  border:2px solid #080808 !important;
+  outline:1px solid rgba(255,255,255,.92) !important;
+  box-shadow:0 1px 4px rgba(0,0,0,.45) !important;
+  font-size:clamp(8px,1.05vw,17px) !important;
+  line-height:1 !important;
+  z-index:7 !important;
+}
+.cell.occupied-cell .marker.selected{
+  outline:2px solid #fff !important;
+  box-shadow:0 0 0 2px #111,0 1px 4px rgba(0,0,0,.45) !important;
+}
+
+
+
+
+/* v0.3.12 — clean Murdoku-like notes: NO candidate background circles */
+.candidate-stack{
+  inset:1.5%;
+  overflow:visible;
+}
+.candidate-token,
+.candidate-token.note-symbol-token,
+.candidate-token:not(.note-symbol-token){
+  width:100% !important;
+  height:100% !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  clip-path:none !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  display:grid !important;
+  place-items:center !important;
+  overflow:visible !important;
+  line-height:1 !important;
+  font-weight:1000 !important;
+  transform:none !important;
+  paint-order:stroke fill !important;
+  -webkit-text-stroke:2px #050505 !important;
+  text-shadow:
+    -1px -1px 0 #050505,
+     1px -1px 0 #050505,
+    -1px  1px 0 #050505,
+     1px  1px 0 #050505,
+     0 0 1px #fff !important;
+}
+.candidate-token:not(.note-symbol-token){
+  color:var(--candidate-color,#3e78d8) !important;
+  font-size:calc(var(--token-font) * 1.38 * var(--annotation-scale,1)) !important;
+  font-family:Arial,"Segoe UI",sans-serif !important;
+}
+.candidate-token.note-symbol-token{
+  color:var(--token-text,#ffd84d) !important;
+  font-size:calc(var(--token-font) * 1.32 * var(--annotation-scale,1)) !important;
+  font-family:"Segoe UI Symbol","Arial Unicode MS",sans-serif !important;
+}
+.candidate-token.selected,
+.candidate-token.note-symbol-token.selected,
+.candidate-token:not(.note-symbol-token).selected{
+  -webkit-text-stroke:2.5px #000 !important;
+  text-shadow:
+    -1px -1px 0 #000,
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000,
+     0 0 4px rgba(255,255,255,.95) !important;
+}
+.candidate-token:not(.note-symbol-token).multi-char{
+  font-size:calc(var(--token-font) * .92 * var(--annotation-scale,1)) !important;
+  letter-spacing:-.05em;
+}
+
+/* Placed note symbols use the same occupied-cell treatment as suspects. */
+.cell.occupied-cell .marker{color:var(--marker-fg,#fff) !important;}
+.cell.occupied-note-symbol .marker.note-symbol-placement{
+  font-family:"Segoe UI Symbol","Arial Unicode MS",sans-serif !important;
+  font-size:clamp(11px,1.35vw,21px) !important;
+  border-radius:18% !important;
+}
+.note-symbol-button.placed::after{
+  content:"✓";
+  position:absolute;
+  right:4px;
+  top:2px;
+  font-size:12px;
+  font-weight:1000;
+  color:#fff;
+  text-shadow:0 1px 2px #000;
+}
+.note-symbol-button{position:relative;}
+
+/* Victim is system-named. */
+.setup-suspect-row.victim-row .sname{font-weight:900;background:#f3eeee;color:#3f3636;}
+
+/* Advanced marker-size control. */
+.advanced-settings-card summary{font-weight:900;font-size:.86rem;cursor:pointer;}
+.annotation-scale-row{display:grid;grid-template-columns:minmax(0,1fr) 58px;gap:8px;align-items:center;}
+.annotation-scale-row input[type="range"]{padding:0;height:28px;}
+.annotation-scale-row output{font-weight:900;text-align:right;color:#3f3831;}
+
+
+/* v0.3.13 — centered, larger final placements */
+.cell.occupied-cell .marker{
+  inset:50% auto auto 50% !important;
+  left:50% !important;
+  top:50% !important;
+  width:auto !important;
+  height:auto !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  padding:0 !important;
+  transform:translate(-50%,-50%) !important;
+  border:0 !important;
+  outline:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  color:var(--occupied-color,#3568a8) !important;
+  font-family:Arial,"Segoe UI",sans-serif !important;
+  font-size:clamp(20px,2.35vw,42px) !important;
+  font-weight:1000 !important;
+  line-height:.9 !important;
+  -webkit-text-stroke:3px #050505 !important;
+  paint-order:stroke fill !important;
+  text-shadow:
+    -1px -1px 0 #050505, 1px -1px 0 #050505,
+    -1px 1px 0 #050505, 1px 1px 0 #050505 !important;
+  z-index:7 !important;
+}
+.cell.occupied-cell .marker.selected{
+  outline:0 !important;
+  box-shadow:none !important;
+  filter:drop-shadow(0 0 2px rgba(255,255,255,.95));
+}
+.cell.occupied-note-symbol .marker.note-symbol-placement{
+  color:var(--marker-fg,#ffd84d) !important;
+  font-family:"Segoe UI Symbol","Arial Unicode MS",sans-serif !important;
+  font-size:clamp(24px,2.7vw,48px) !important;
+  border-radius:0 !important;
+  background:transparent !important;
+}
+/* Victim ID remains automatic, but the name field is editable. */
+.setup-suspect-row.victim-row .sname{
+  font-weight:900;
+  background:#fff;
+  color:#3f3636;
+}
+/* Keep the handling group at the bottom even if future sections are added. */
+.board-controls{display:flex;flex-direction:column;}
+.board-controls > .control-group:last-child{margin-top:auto;}
+
+
+/* v0.3.14 — four-corner perspective correction ------------------------- */
+.editor-modes{grid-template-columns:repeat(2,1fr)}
+.setup-grid-box.perspective-hidden{display:none}
+.perspective-overlay{
+  position:absolute;inset:0;z-index:12;width:100%;height:100%;pointer-events:none;overflow:visible;
+}
+.perspective-overlay polygon{
+  fill:rgba(35,112,214,.10);stroke:#1474df;stroke-width:.65;vector-effect:non-scaling-stroke;
+  stroke-linejoin:round;
+}
+.perspective-handles{position:absolute;inset:0;z-index:14;pointer-events:none}
+.perspective-handle{
+  position:absolute;width:28px;height:28px;min-width:28px;padding:0;transform:translate(-50%,-50%);
+  border-radius:50%;border:3px solid #111;background:#fff;color:#111;font-size:8px;font-weight:1000;
+  display:grid;place-items:center;box-shadow:0 1px 5px rgba(0,0,0,.42);cursor:move;pointer-events:auto;touch-action:none;
+}
+.perspective-handle:hover{background:#eaf4ff;border-color:#075fb8}
+.perspective-handle span{pointer-events:none;line-height:1}
+.perspective-status{min-height:1.2em;font-weight:800;color:#2d6756}
+.perspective-status.error{color:var(--danger)}
+#perspectiveTools .primary[disabled]{opacity:.55;cursor:wait}
+
+
+/* v0.3.17 — translucent hover using the selected suspect/symbol color */
+.grid-overlay .cell:hover{
+  background:var(--hover-fill, rgba(70,120,190,.20)) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.78),
+    inset 0 0 0 3px rgba(20,20,20,.32) !important;
+}
+.grid-overlay .cell.pressing{
+  background:var(--hover-fill-press, rgba(70,120,190,.27)) !important;
+}
+
+
+/* v0.3.19 — simplified New / Edit and suspect list */
+.setup-body{
+  grid-template-columns:minmax(300px,390px) minmax(0,1fr) !important;
+  align-items:stretch;
+}
+.preset-label{
+  font-size:.7rem;
+  font-weight:800;
+  color:#665e56;
+  margin:3px 0 5px;
+}
+.preset-size-buttons{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+  margin-bottom:9px;
+}
+.preset-size-buttons button{font-weight:900;}
+.suspect-list{
+  grid-template-columns:repeat(auto-fit,minmax(58px,1fr)) !important;
+  gap:7px;
+}
+.suspect{
+  min-height:62px !important;
+  padding:6px !important;
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  text-align:center !important;
+}
+.suspect .avatar{
+  width:46px !important;
+  height:46px !important;
+  border-radius:10px !important;
+  background:var(--suspect-color,#355) !important;
+  border:3px solid #111;
+  color:#fff;
+  font-size:1rem;
+  text-shadow:0 1px 2px rgba(0,0,0,.7);
+}
+.suspect.active{
+  background:rgba(47,113,93,.08) !important;
+  outline:3px solid var(--suspect-color,#2f715d) !important;
+}
+.suspect.placed::after{
+  right:4px !important;
+  top:2px !important;
+}
+@media(max-width:700px){
+  .setup-body{grid-template-columns:1fr !important;}
+}
+
+
+/* v0.3.21 — icon tools and eraser mode */
+.icon-tool-button{
+  min-height:36px;
+  display:grid;
+  place-items:center;
+  padding:5px;
+}
+.icon-tool-button svg{
+  width:20px;
+  height:20px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  pointer-events:none;
+}
+.icon-tool-button.active,
+.icon-tool-button[aria-pressed="true"]{
+  background:#e7ecee;
+  border-color:#68757b;
+  box-shadow:inset 0 0 0 2px rgba(70,80,85,.12);
+}
+.grid-overlay.erase-mode .cell{cursor:cell;}
+.grid-overlay.erase-mode .cell:hover{
+  background:var(--hover-fill,rgba(111,119,124,.18)) !important;
+}
+
+
+/* v0.3.24 — circle note symbol slightly larger */
+.note-symbol-button.circle-symbol-button .note-glyph{
+  font-size:29px !important;
+}
+.candidate-token.note-symbol-token.circle-symbol-token{
+  font-size:calc(var(--token-font) * 1.46 * var(--annotation-scale,1)) !important;
+}
+.cell.occupied-note-symbol .marker.note-symbol-placement.circle-symbol-placement{
+  font-size:clamp(27px,3vw,53px) !important;
+}
+
+
+/* v0.3.26 — Play sidebar recolor control */
+.suspect-toolbar{display:flex;margin:0 2px 8px;flex:none}
+.palette-button{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;min-height:34px;font-size:.76rem;background:var(--button-bg,#fffdf9)}
+.palette-button svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.view-toggle[aria-pressed="true"]{border-color:var(--green);font-weight:800}
+
+/* Dark view: app chrome only; retain the original puzzle image and markers. */
+body.dark-view{
+  --bg:#15191f;
+  --panel:#222a33;
+  --line:#45515e;
+  --text:#f0f3f6;
+  --muted:#b2bdc9;
+  --green:#78c7a8;
+  --green2:#303f43;
+  --danger:#ff948c;
+  --shadow:0 4px 18px rgba(0,0,0,.28);
+  --button-bg:#303b47;
+  color-scheme:dark;
+}
+body.dark-view button:not(.cell),
+body.dark-view .file-button{background:var(--button-bg);color:var(--text);border-color:var(--line)}
+body.dark-view button:not(.cell):hover,
+body.dark-view .file-button:hover{background:#415060}
+body.dark-view button.primary{background:#31735d;color:#fff}
+body.dark-view button.primary:hover{background:#41856d}
+body.dark-view .ghost{background:transparent}
+body.dark-view .control-group{background:#27313b}
+body.dark-view .control-group h3{color:#c0cad5}
+body.dark-view .version-badge,
+body.dark-view .counter{background:#344941;color:#c0f2df}
+body.dark-view .suspect{background:#303b47}
+body.dark-view .suspect.active{background:rgba(120,199,168,.12) !important}
+body.dark-view .suspect.placed::after{color:#adf1d1}
+body.dark-view .note-symbols-panel{background:var(--panel)}
+body.dark-view .note-symbol-button{background:#343141;border-color:#14141a}
+body.dark-view .note-symbol-button:hover{background:#454157}
+body.dark-view .note-symbol-button.active{background:#4c4860;outline-color:#d9e5ef}
+body.dark-view .palette-button{background:#313e48}
+body.dark-view .palette-button:hover{background:#415563}
+body.dark-view .view-toggle[aria-pressed="true"]{background:#354d53;border-color:#83cbb7}
+body.dark-view .icon-tool-button.active,
+body.dark-view .icon-tool-button[aria-pressed="true"]{background:#40515a;border-color:#97acb8}
+body.dark-view .gesture-list div{background:#29343e}
+body.dark-view .status.good{color:#94e8c4}
+body.dark-view .setup-card label,
+body.dark-view .preset-label{color:#c4cdd6}
+body.dark-view .setup-card input,
+body.dark-view .setup-card select,
+body.dark-view .setup-card textarea{background:#293440;color:var(--text);border-color:var(--line)}
+body.dark-view .setup-suspect-row{background:#28333e;border-color:var(--line)}
+body.dark-view .setup-suspect-row.victim-row .sname{background:#29343e;color:var(--text)}
+body.dark-view .annotation-scale-row output{color:var(--text)}
+body.dark-view .segmented button.active,
+body.dark-view .mode-tools button.active{background:#355548;color:#dcfff1;border-color:#76baa2}
+body.dark-view .perspective-status{color:#a3e9ce}
+body.dark-view dialog{background:var(--panel);color:var(--text)}
+
+
+/* v0.3.27: Dark view never changes the puzzle surface (image,
+   transparent cells, overlays, original borders or coordinate labels).
+   Grid boundaries alone receive an image-independent two-tone hairline. */
+body.dark-view .grid-overlay .cell::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+  border-right:1px solid rgba(20,22,24,.62);
+  border-bottom:1px solid rgba(20,22,24,.62);
+  box-shadow:inset -1px -1px 0 rgba(255,255,255,.55);
+}
+
+
+/* v0.3.28 — compact Play suspect tiles with an independent gender button. */
+.suspect-list{
+  grid-template-columns:repeat(auto-fit,minmax(86px,1fr)) !important;
+  gap:7px !important;
+}
+.suspect-entry{
+  min-width:0;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 28px;
+  align-items:stretch;
+  gap:4px;
+}
+.suspect-entry .suspect{
+  width:100%;
+  min-width:0;
+  min-height:56px !important;
+  padding:4px !important;
+}
+.suspect-entry .suspect .avatar{
+  width:38px !important;
+  height:38px !important;
+  font-size:.95rem;
+}
+.suspect-entry .gender-button{
+  min-width:0;
+  width:28px;
+  padding:0;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--panel);
+  color:var(--muted);
+  font-size:1.25rem;
+  font-weight:900;
+  line-height:1;
+  cursor:pointer;
+}
+.suspect-entry .gender-button[data-gender="male"]{color:#2781ca}
+.suspect-entry .gender-button[data-gender="female"]{color:#c14b91}
+.suspect-entry .gender-button:hover{border-color:var(--green);background:var(--green2)}
+.suspect-entry .gender-button:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+body.dark-view .suspect-entry .gender-button{background:#303b47;border-color:var(--line);color:#c5cdd5}
+body.dark-view .suspect-entry .gender-button[data-gender="male"]{color:#7ac7ff}
+body.dark-view .suspect-entry .gender-button[data-gender="female"]{color:#f3a0cd}
+body.dark-view .suspect-entry .gender-button:hover{background:#415060;border-color:#85c7b0}
+
+/* v0.3.29 — the entire tile is one selectable suspect card.
+   Right click its left/right half to cycle gender/ribbon. */
+.suspect-list{
+  grid-template-columns:repeat(auto-fit,minmax(76px,1fr)) !important;
+  gap:7px !important;
+}
+.suspect-list .suspect.suspect-entry{
+  display:flex !important;
+  position:relative;
+  overflow:hidden;
+  width:100%;
+  min-width:0;
+  min-height:78px !important;
+  padding:10px 3px 6px !important;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  isolation:isolate;
+}
+.suspect-list .suspect.suspect-entry .avatar{
+  width:48px !important;
+  height:48px !important;
+  flex:none;
+  font-size:1.09rem;
+  position:relative;
+  z-index:1;
+  transition:filter .12s ease;
+}
+/* Small corner tab like the reference, anchored top LEFT. No tab for unknown. */
+.suspect-gender-mark{
+  display:none;
+  position:absolute;
+  top:0;left:0;
+  width:30px;height:28px;
+  z-index:2;
+  border-radius:7px 0 11px 0;
+  border-right:1.5px solid currentColor;
+  border-bottom:1.5px solid currentColor;
+  background:#f8fbff;
+  color:#2679c5;
+  font-weight:950;
+  font-size:23px;
+  line-height:1;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+  box-shadow:1px 1px 2px rgba(0,0,0,.16);
+}
+.suspect[data-gender="male"] .suspect-gender-mark,
+.suspect[data-gender="female"] .suspect-gender-mark{display:flex}
+.suspect[data-gender="female"] .suspect-gender-mark{color:#d3317c;background:#fff5fa}
+/* Ribbon indicator: one narrow stripe, two narrow stripes or one wide stripe. */
+.suspect-ribbon-mark{
+  display:none;
+  position:absolute;
+  top:0;right:0;
+  width:29px;height:28px;
+  z-index:2;
+  border-radius:0 8px 0 10px;
+  background:#fff8fd;
+  border-left:1px solid #b4417d;
+  border-bottom:1px solid #b4417d;
+  overflow:hidden;
+  pointer-events:none;
+  box-shadow:-1px 1px 2px rgba(0,0,0,.14);
+}
+.suspect[data-ribbon="single"] .suspect-ribbon-mark,
+.suspect[data-ribbon="double"] .suspect-ribbon-mark,
+.suspect[data-ribbon="thick"] .suspect-ribbon-mark{display:block}
+.suspect-ribbon-mark::before,.suspect-ribbon-mark::after{
+  content:"";
+  position:absolute;
+  left:0;top:0;
+  width:41px;height:4px;
+  border-radius:3px;
+  background:#bf3978;
+  transform:rotate(45deg);
+  transform-origin:center;
+  box-shadow:0 0 0 1px rgba(255,255,255,.22);
+}
+.suspect-ribbon-mark::before{top:8px;left:-6px}
+.suspect-ribbon-mark::after{display:none}
+.suspect[data-ribbon="double"] .suspect-ribbon-mark::before{top:5px;left:-6px;height:3px}
+.suspect[data-ribbon="double"] .suspect-ribbon-mark::after{display:block;top:13px;left:-6px;height:3px}
+.suspect[data-ribbon="thick"] .suspect-ribbon-mark::before{top:10px;left:-6px;height:10px}
+/* Placed: subdued card and large centered check. The corner notes also dim. */
+.suspect-list .suspect.suspect-entry.placed::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:3;
+  background:rgba(23,31,37,.56);
+  pointer-events:none;
+}
+.suspect-list .suspect.suspect-entry.placed::after{
+  content:"✓";
+  position:absolute;
+  inset:0;
+  top:0 !important;
+  right:0 !important;
+  display:grid;
+  place-items:center;
+  z-index:4;
+  font-size:clamp(35px,3.6vw,49px);
+  font-weight:1000;
+  line-height:1;
+  color:#fcfff9;
+  -webkit-text-stroke:1px #175c3b;
+  text-shadow:0 2px 7px rgba(0,0,0,.9),0 0 4px #14583b;
+  background:none;
+  pointer-events:none;
+}
+body.dark-view .suspect-gender-mark{background:#eef7ff}
+body.dark-view .suspect[data-gender="female"] .suspect-gender-mark{background:#ffecf5}
+body.dark-view .suspect-ribbon-mark{background:#fff0f8}
+
+
+/* v0.3.31 — flush portrait, compact triangular gender corner and precision ribbons. */
+.suspect-list .suspect.suspect-entry {
+  padding:0 !important;
+  min-height:78px !important;
+  border-radius:9px;
+  background:var(--suspect-color,#355) !important;
+  overflow:hidden; /* Corner marks terminate precisely at the button edge. */
+}
+.suspect-list .suspect.suspect-entry .avatar {
+  position:absolute;
+  inset:0;
+  z-index:1;
+  display:grid;
+  place-items:center;
+  width:100% !important;
+  height:100% !important;
+  border:0 !important;
+  border-radius:inherit !important;
+  background:var(--suspect-color,#355) !important;
+  font-size:clamp(23px,2.4vw,34px);
+  line-height:1;
+}
+/* An unobtrusive 34 × 34 corner triangle with a simple, crisp gender symbol. */
+.suspect-list .suspect.suspect-entry .suspect-gender-mark {
+  display:none;
+  position:absolute;
+  top:0;
+  left:0;
+  width:34px;
+  height:34px;
+  box-sizing:border-box;
+  padding:2px 0 0 3px;
+  z-index:2;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  background:transparent !important;
+  align-items:flex-start;
+  justify-content:flex-start;
+  font-family:Arial, sans-serif;
+  font-size:18px;
+  font-weight:700;
+  line-height:1;
+  color:#1260ac;
+  -webkit-text-stroke:0;
+  text-shadow:none;
+  pointer-events:none;
+}
+.suspect-list .suspect.suspect-entry .suspect-gender-mark::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:#f6fbff;
+  clip-path:polygon(0 0,100% 0,0 100%);
+}
+.suspect-list .suspect.suspect-entry[data-gender="male"] .suspect-gender-mark,
+.suspect-list .suspect.suspect-entry[data-gender="female"] .suspect-gender-mark { display:flex; }
+.suspect-list .suspect.suspect-entry[data-gender="female"] .suspect-gender-mark { color:#b91d5d; }
+.suspect-list .suspect.suspect-entry[data-gender="female"] .suspect-gender-mark::before { background:#fff5f9; }
+
+/* Mirrored right corner, equal 34 × 34 footprint; no tab/backing color.
+   Diagonal polygons physically touch BOTH the top and right edges of the tile.
+   No rotations or negative offsets that leave dangling ribbon ends. */
+.suspect-list .suspect.suspect-entry .suspect-ribbon-mark,
+body.dark-view .suspect-list .suspect.suspect-entry .suspect-ribbon-mark {
+  display:none;
+  position:absolute;
+  top:0;
+  right:0;
+  width:34px;
+  height:34px;
+  z-index:2;
+  border:0;
+  border-radius:0;
+  background:transparent !important;
+  box-shadow:none;
+  overflow:hidden;
+  pointer-events:none;
+}
+.suspect-list .suspect.suspect-entry[data-ribbon="single"] .suspect-ribbon-mark,
+.suspect-list .suspect.suspect-entry[data-ribbon="double"] .suspect-ribbon-mark,
+.suspect-list .suspect.suspect-entry[data-ribbon="thick"] .suspect-ribbon-mark { display:block; }
+.suspect-list .suspect.suspect-entry .suspect-ribbon-mark::before,
+.suspect-list .suspect.suspect-entry .suspect-ribbon-mark::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border-radius:0;
+  background:#fff;
+  box-shadow:none;
+  transform:none;
+  pointer-events:none;
+  /* The two long sides run at 45°; both short ends are flush to the card. */
+  clip-path:polygon(29% 0,47% 0,100% 53%,100% 71%);
+}
+.suspect-list .suspect.suspect-entry .suspect-ribbon-mark::after { display:none; }
+.suspect-list .suspect.suspect-entry[data-ribbon="double"] .suspect-ribbon-mark::before {
+  clip-path:polygon(12% 0,22% 0,100% 78%,100% 88%);
+}
+.suspect-list .suspect.suspect-entry[data-ribbon="double"] .suspect-ribbon-mark::after {
+  display:block;
+  clip-path:polygon(39% 0,49% 0,100% 51%,100% 61%);
+}
+.suspect-list .suspect.suspect-entry[data-ribbon="thick"] .suspect-ribbon-mark::before {
+  clip-path:polygon(21% 0,57% 0,100% 43%,100% 79%);
+}
+
+
+/* v0.3.33 — real corner ribbon artwork (not tiny clipped pseudo-element strips).
+   All three styles span the complete top-to-right diagonal of the 34px corner.
+   SVG paths keep both ends flush to the tile edges; no backing/background. */
+.suspect-list .suspect.suspect-entry > svg.suspect-ribbon-mark,
+body.dark-view .suspect-list .suspect.suspect-entry > svg.suspect-ribbon-mark {
+  position:absolute;
+  top:0;
+  right:0;
+  display:none;
+  width:34px;
+  height:34px;
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  z-index:2;
+  overflow:visible;
+  background:none !important;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  pointer-events:none;
+}
+.suspect-list .suspect.suspect-entry[data-ribbon="single"] > svg.suspect-ribbon-mark,
+.suspect-list .suspect.suspect-entry[data-ribbon="double"] > svg.suspect-ribbon-mark,
+.suspect-list .suspect.suspect-entry[data-ribbon="thick"] > svg.suspect-ribbon-mark {display:block;}
+/* Disable old CSS drawings, which were too narrow and could clip inside the corner. */
+.suspect-list .suspect.suspect-entry > svg.suspect-ribbon-mark::before,
+.suspect-list .suspect.suspect-entry > svg.suspect-ribbon-mark::after {content:none !important;display:none !important;}
+.suspect-list .suspect.suspect-entry > svg.suspect-ribbon-mark path {
+  fill:white;
+  stroke:#14171b;
+  stroke-width:.95px;
+  stroke-linejoin:round;
+  vector-effect:non-scaling-stroke;
+  display:none;
+}
+.suspect-list .suspect.suspect-entry[data-ribbon="single"] > svg.suspect-ribbon-mark .ribbon-single,
+.suspect-list .suspect.suspect-entry[data-ribbon="double"] > svg.suspect-ribbon-mark .ribbon-double,
+.suspect-list .suspect.suspect-entry[data-ribbon="thick"] > svg.suspect-ribbon-mark .ribbon-thick {display:block;}
+
+/* Override the dark-view hidden baseline with equally explicit visible states.
+   The missing dark selectors were the root cause of ribbons disappearing. */
+body.dark-view .suspect-list .suspect.suspect-entry[data-ribbon="single"] > svg.suspect-ribbon-mark,
+body.dark-view .suspect-list .suspect.suspect-entry[data-ribbon="double"] > svg.suspect-ribbon-mark,
+body.dark-view .suspect-list .suspect.suspect-entry[data-ribbon="thick"] > svg.suspect-ribbon-mark {display:block;}
+
+
+/* v0.3.34 — bold, clear gender icons in the compact portrait corner. */
+.suspect-list .suspect.suspect-entry .suspect-gender-mark {
+  padding:0;
+  align-items:flex-start;
+  justify-content:flex-start;
+}
+.suspect-list .suspect.suspect-entry .suspect-gender-mark > svg.gender-icon {
+  display:block;
+  flex:none;
+  width:22px;
+  height:22px;
+  margin:2px 0 0 2px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:2.75;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  overflow:visible;
+}
+/* The gender SVG inherits the crisp blue/pink of its triangular corner. */
+.suspect-list .suspect.suspect-entry[data-gender="male"] .suspect-gender-mark {color:#1169c3;}
+.suspect-list .suspect.suspect-entry[data-gender="female"] .suspect-gender-mark {color:#c41e66;}
+
+/* Live empty-cell count in Play > Puzzle. Includes automatic X exclusions. */
+.available-positions {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  border:1px solid var(--line);
+  background:var(--green2,#eef5f0);
+  border-radius:8px;
+  padding:7px 9px;
+  margin-bottom:7px;
+}
+.available-positions-label {
+  font-size:.71rem;
+  font-weight:750;
+  line-height:1.2;
+}
+.available-positions-value {
+  display:flex;
+  align-items:baseline;
+  flex:none;
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+.available-positions-value strong {
+  font-size:1.2rem;
+  font-weight:900;
+  line-height:1;
+  color:var(--green,#246e54);
+}
+.available-positions-total {
+  font-size:.68rem;
+  font-weight:650;
+  color:var(--muted,#6a6a6a);
+}
+body.dark-view .available-positions {
+  background:#303f41;
+  border-color:#526168;
+}
+body.dark-view .available-positions-value strong {color:#a4f2cc;}
+body.dark-view .available-positions-total {color:#bbc5ce;}
+
+
+/* v0.3.38 — emphasize selected marks without highlighting grid positions. */
+/* Preserve the enlarged selected candidates, but use a solid, heavier outline
+   rather than white/color halos. Unselected marks remain completely unchanged. */
+
+.grid-overlay .candidate-token.selected {
+  position: relative;
+  z-index: 6;
+  opacity: 1 !important;
+  transform: scale(1.23) !important;
+  -webkit-text-stroke: 3.3px #050505 !important;
+  text-shadow:
+    -1px -1px 0 #050505,
+     1px -1px 0 #050505,
+    -1px  1px 0 #050505,
+     1px  1px 0 #050505 !important;
+  filter: none !important;
+}
+.grid-overlay .marker.selected {
+  filter: none !important;
+  box-shadow: none !important;
+  transform: translate(-50%,-50%) scale(1.12) !important;
+}
+
+/* v0.3.39: no gender background; high-contrast icon outline per view. */
+.suspect-list .suspect.suspect-entry .suspect-gender-mark,
+body.dark-view .suspect-list .suspect.suspect-entry .suspect-gender-mark {
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+.suspect-list .suspect.suspect-entry .suspect-gender-mark::before,
+body.dark-view .suspect-list .suspect.suspect-entry .suspect-gender-mark::before {
+  content:none !important;
+  display:none !important;
+  background:none !important;
+}
+.suspect-list .suspect.suspect-entry .suspect-gender-mark > svg.gender-icon {
+  filter:drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 1px #ffffff);
+}
+body.dark-view .suspect-list .suspect.suspect-entry .suspect-gender-mark > svg.gender-icon {
+  filter:drop-shadow(0 0 1px #101820) drop-shadow(0 0 1px #101820);
+}
+/* Ribbon colors (white, black, red, yellow, green, blue, orange, purple). */
+.suspect-list .suspect.suspect-entry > svg.suspect-ribbon-mark path,
+body.dark-view .suspect-list .suspect.suspect-entry > svg.suspect-ribbon-mark path {
+  fill:var(--ribbon-fill,#fff) !important;
+  stroke:var(--ribbon-edge,#14171b) !important;
+  stroke-width:1.1px;
+}
+.rename-dialog {min-width:min(330px,calc(100vw - 30px));max-width:420px;border-radius:12px;border:1px solid var(--line);padding:20px;background:var(--panel);color:var(--text);box-shadow:0 16px 42px rgba(0,0,0,.25)}
+.rename-dialog::backdrop {background:rgba(0,0,0,.55)}
+.rename-dialog form {display:grid;gap:12px}
+.rename-dialog h3,.rename-dialog p {margin:0}
+.rename-dialog input {width:100%;font:700 20px system-ui,sans-serif;text-transform:uppercase;padding:8px 10px;box-sizing:border-box;border:1px solid var(--line);border-radius:7px;color:var(--text);background:var(--panel)}
+.rename-dialog .rename-actions {display:flex;justify-content:flex-end;gap:9px;margin-top:4px}
+body.dark-view .rename-dialog input {background:#293440;color:var(--text)}
