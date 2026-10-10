@@ -969,6 +969,7 @@ body.dark-view .suspect-list .suspect.suspect-entry > svg.suspect-ribbon-mark pa
 .rename-dialog .rename-actions {display:flex;justify-content:flex-end;gap:9px;margin-top:4px}
 body.dark-view .rename-dialog input {background:#293440;color:var(--text)}
 
+
 /* v0.3.43 — directly visible marker scale and in-app New/Edit + Play guides. */
 .marker-size-card .annotation-scale-row { margin:5px 0 3px; }
 .marker-size-card .annotation-scale-row output { color:var(--text); }
