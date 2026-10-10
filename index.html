@@ -14,7 +14,7 @@
     </div>
     <div class="topbar-actions">
       <button id="setupBtn" class="ghost compact" type="button">New / Edit</button>
-      <span id="versionBadge" class="version-badge">v0.3.42</span>
+      <span id="versionBadge" class="version-badge">v0.3.43</span>
     </div>
     <div id="topbarResizer" class="topbar-resizer" role="separator" aria-orientation="horizontal" tabindex="0" title="Drag to resize height"></div>
   </header>
@@ -121,6 +121,7 @@
         <h2>New / Edit</h2>
       </div>
       <div class="setup-header-actions">
+        <button id="setupHelpBtn" class="ghost" type="button" aria-haspopup="dialog">Help</button>
         <button id="newPuzzleBtn" type="button">New Puzzle</button>
         <button id="cancelSetupBtn" class="ghost" type="button">Cancel</button>
         <button id="saveSetupBtn" class="primary" type="button">Save & Play</button>
@@ -193,18 +194,14 @@
           </div>
         </section>
 
-        <details class="setup-card advanced-settings-card">
-          <summary>Advanced settings</summary>
-          <div class="advanced-content">
-            <label>Marker &amp; symbol size
-              <div class="annotation-scale-row">
-                <input id="annotationScale" type="range" min="70" max="150" step="5" value="100" />
-                <output id="annotationScaleValue">100%</output>
-              </div>
-            </label>
-            <p class="small-note">Changes the size of suspect letters and note symbols on the grid.</p>
+        <section class="setup-card marker-size-card">
+          <h3>Marker &amp; symbol size</h3>
+          <div class="annotation-scale-row">
+            <input id="annotationScale" type="range" min="70" max="150" step="5" value="100" aria-label="Marker &amp; symbol size" />
+            <output id="annotationScaleValue" for="annotationScale">100%</output>
           </div>
-        </details>
+          <p class="small-note">Set the size of suspect letters and note symbols on the grid (70%–150%).</p>
+        </section>
       </aside>
 
       <section class="setup-preview-panel">
@@ -238,20 +235,61 @@
     </div>
   </section>
 
-  <dialog id="helpDialog">
-    <form method="dialog" class="dialog-card">
-      <div class="dialog-head"><h2>How to play</h2><button class="icon-close" value="close">×</button></div>
-      <ul>
-        <li>At most <strong>one suspect</strong> may be placed in each row and column. Some rows or columns may remain empty.</li>
-        <li><strong>Left click:</strong> add or remove a candidate position.</li>
-        <li><strong>Left drag:</strong> add or remove multiple candidate positions. The first cell determines the action.</li>
-        <li><strong>Right click / drag:</strong> add or remove a global X, independent of the selected suspect.</li>
-        <li><strong>Long left:</strong> place the selected suspect or note symbol. The rest of its row and column are excluded automatically.</li>
-        <li>Candidate positions for all suspects remain visible.</li>
-        <li><strong>Suspect cards:</strong> Left click selects; right click applies the last-used ribbon or cycles the current ribbon; Ctrl+click cycles ribbon colors; Shift+click cycles gender; long press changes the letter.</li>
-        <li>Blocked cells are optional and are only needed when they are known.</li>
-      </ul>
-      <button class="primary" value="close">Close</button>
+  <dialog id="setupHelpDialog" class="user-guide-dialog" aria-labelledby="setupHelpTitle">
+    <form method="dialog" class="dialog-card guide-dialog-card">
+      <div class="dialog-head"><h2 id="setupHelpTitle">New / Edit — User Guide</h2><button class="icon-close" value="close" aria-label="Close guide">×</button></div>
+      <div class="user-guide-content">
+        <h3>1. Basic information</h3>
+        <p>Enter a puzzle title. Pick a 6×6, 9×9 or 16×16 preset, or enter your own Rows, Columns and Suspects (up to 52). Press <strong>Apply</strong> to generate suspects and redistribute their colors across the full color spectrum. Presets only fill in the fields; you can edit them first.</p>
+        <p>The letter X is excluded. Up to 22 suspects, V always represents the Victim. With more than 22 suspects, neither V nor X is used.</p>
+        <h3>2. Image</h3>
+        <p>Paste an image URL or select a local image. A local image is embedded in the saved puzzle. If the title is blank, the image filename may be used as the title. <strong>Remove image</strong> clears the background.</p>
+        <h3>3. Editor modes</h3>
+        <ul>
+          <li><strong>Perspective:</strong> Drag the TL, TR, BR and BL corner handles to the photographed grid corners and choose <strong>Rectify image</strong>. Use Reset corners to try again.</li>
+          <li><strong>Calibration:</strong> Align the grid by dragging its edges or adjusting the Left, Top, Right and Bottom percentages.</li>
+          <li><strong>Blocked cells:</strong> Left click a free cell to block it; click a blocked cell to unblock it. Left drag repeats the first cell's action throughout the drag. Right click does nothing. Use Clear all blocked cells to reset the blocks.</li>
+        </ul>
+        <h3>4. Marker &amp; symbol size</h3>
+        <p>Use the always-visible slider to adjust the grid letters and note symbols from 70% to 150%.</p>
+        <h3>5. Finish</h3>
+        <p><strong>Save &amp; Play</strong> saves the setup and returns to the board. <strong>Cancel</strong> discards unsaved edits. <strong>New Puzzle</strong> starts a blank setup. Changing the grid size or suspect IDs can clear existing play progress, so Export a backup beforehand.</p>
+      </div>
+      <button class="primary guide-close" value="close">Close</button>
+    </form>
+  </dialog>
+
+  <dialog id="helpDialog" class="user-guide-dialog" aria-labelledby="playHelpTitle">
+    <form method="dialog" class="dialog-card guide-dialog-card">
+      <div class="dialog-head"><h2 id="playHelpTitle">Play — User Guide</h2><button class="icon-close" value="close" aria-label="Close guide">×</button></div>
+      <div class="user-guide-content">
+        <p>Select a suspect or note symbol on the left, then mark possibilities on the puzzle grid. The app helps you track deductions; it does not solve the puzzle automatically.</p>
+        <h3>1. Puzzle grid</h3>
+        <ul>
+          <li><strong>Left click / drag:</strong> Add or remove candidate positions for the selected suspect or note symbol. The first cell determines whether dragging adds or removes marks.</li>
+          <li><strong>Right click / drag:</strong> Add or remove a global X. An X marks a cell as impossible for every suspect.</li>
+          <li><strong>Long left press:</strong> Place or remove the selected suspect or symbol. The rest of its row and column become automatically unavailable.</li>
+          <li><strong>Eraser:</strong> Enable it, then left click or drag to clear marks, manual X or a placement in each cell. Right click continues to control X.</li>
+        </ul>
+        <h3>2. Suspect cards</h3>
+        <ul>
+          <li><strong>Left click:</strong> Select suspect; the selected suspect's indications are emphasized on the board. Other suspects' indications remain visible.</li>
+          <li><strong>Right click:</strong> Cycle ribbon type (none / single / double / thick). A suspect without a ribbon starts with the last-used ribbon style and color.</li>
+          <li><strong>Ctrl + click:</strong> Cycle ribbon color (white, black, red, yellow, green, blue, orange, purple).</li>
+          <li><strong>Shift + click:</strong> Cycle gender (none / male / female).</li>
+          <li><strong>Long left press:</strong> Change the suspect's letter.</li>
+        </ul>
+        <p>Press a suspect's letter key (A–Z) to select it. <strong>Redistribute colors</strong> changes suspect colors without resetting the puzzle.</p>
+        <h3>3. Note symbols &amp; progress</h3>
+        <p>Triangle, circle, square and star are personal note symbols; they may be marked and placed, but they do not count as suspects when you Check the puzzle.</p>
+        <p><strong>Undo / Redo</strong> affects board actions only, not gender or ribbon changes. <strong>Clear selected suspect</strong> removes the selected suspect's marks. <strong>Reset progress</strong> clears play progress after confirmation.</p>
+        <h3>4. Puzzle &amp; display</h3>
+        <p><strong>Available positions</strong> counts cells remaining after blocked cells, manual and automatic X marks, and placements. Candidate marks do not reduce this count. <strong>Check</strong> verifies that all suspects have been placed consistently with row, column and blocked-cell rules, not against an official solution.</p>
+        <p>Use <strong>Coordinates</strong> and <strong>Dark / Light view</strong> to adjust the interface. Dark view does not change the puzzle image.</p>
+        <h3>5. Export &amp; Import</h3>
+        <p>Progress is saved locally when browser storage is available. <strong>Export</strong> downloads the puzzle and its progress in one JSON file named <code>Puzzle Name_YYYYMMDD_HHMM.json</code>. <strong>Import</strong> restores them on the same or another device.</p>
+      </div>
+      <button class="primary guide-close" value="close">Close</button>
     </form>
   </dialog>
 
