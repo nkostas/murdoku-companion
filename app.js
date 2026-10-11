@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "0.3.45";
+  const VERSION = "0.3.46";
   const CONFIG_KEY = "murdoku-general:config:v1";
   const PROGRESS_KEY = "murdoku-general:progress:v1";
   const LAYOUT_KEY = "murdoku-general:layout:v1";
@@ -1050,7 +1050,7 @@ function rgbaFromHex(hex, alpha=.18){
       const img=await loadProcessImage(imageSource(draft),draft.image.type),result=rectifyImageWebGL(img,perspectiveCorners);
       const base=(draft.image.name||draft.title||"puzzle").replace(/\.[a-z0-9]{1,8}$/i,"");
       draft.image={type:"data",value:result.url,name:`${base}-rectified.jpg`};
-      draft.gridInset={left:0,top:0,right:0,bottom:0};syncInsetInputs();setSetupImage();buildSetupGrid();perspectiveCorners=cornersFromInset(draft.gridInset);renderPerspectiveOverlay();
+      draft.gridInset={left:0,top:0,right:0,bottom:0};setSetupImage();buildSetupGrid();perspectiveCorners=cornersFromInset(draft.gridInset);renderPerspectiveOverlay();
       if(el.perspectiveStatus)el.perspectiveStatus.textContent=`Done: ${result.width} × ${result.height}px. The new image is rectangular.`;
       setSetupMode("calibrate");
     }catch(err){if(el.perspectiveStatus){el.perspectiveStatus.textContent=err.message;el.perspectiveStatus.classList.add("error")}else alert(err.message)}

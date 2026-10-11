@@ -1,9 +1,13 @@
-Murdoku Companion — v0.3.45
+Murdoku Companion — v0.3.46
 
 Open index.html in a modern browser, or use the online application:
 https://nkostas.github.io/murdoku-companion/
 
 For full New / Edit and Play instructions, see README.md or use the Help buttons inside the app.
+
+Changes in v0.3.46:
+- Fixed Rectify image error caused by an obsolete syncInsetInputs() call.
+- Rectification now continues to update the image, reset insets, and return to Calibration.
 
 Changes in v0.3.45:
 - Load example in the New / Edit header opens the included The Treasure Hunt 24x24 puzzle after confirmation; Save & Play commits the example, Cancel preserves the original puzzle.

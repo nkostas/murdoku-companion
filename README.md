@@ -2,7 +2,11 @@
 
 An interactive browser-based companion for **solving Murdoku puzzles**. Keep track of suspects, possible positions, deductions and notes while you work out the solution yourself. **This is an assistant, not an automatic solver.**
 
-**Current version:** `v0.3.45`
+**Current version:** `v0.3.46`
+
+## v0.3.46 — Rectify image bug fix
+
+Fixed a JavaScript error (`syncInsetInputs is not defined`) when finishing **Rectify image** in New / Edit → Perspective. The obsolete call was removed because grid inset values are now managed directly without percentage input fields.
 
 ## Run the app
 
