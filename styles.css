@@ -1032,3 +1032,16 @@ body.resizing-editor-panel{cursor:ew-resize;user-select:none}
   .editor-mode-row{grid-template-columns:minmax(100px,1fr) minmax(0,1.35fr)}
   .editor-mode-actions button{font-size:.66rem}
 }
+
+
+/* v0.3.45 — blocked positions are clearly dark gray ONLY for puzzles without an image.
+   The existing translucent blocked-cell treatment is preserved for image puzzles,
+   both in Light and Dark view. */
+.board-wrap:not(.has-image) .grid-overlay .cell.blocked,
+body.dark-view .board-wrap:not(.has-image) .grid-overlay .cell.blocked {
+  background: #55595f !important;
+}
+.setup-preview-wrap:not(.has-image) .setup-grid-overlay .setup-cell.blocked,
+body.dark-view .setup-preview-wrap:not(.has-image) .setup-grid-overlay .setup-cell.blocked {
+  background: #55595f !important;
+}

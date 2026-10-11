@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "0.3.44";
+  const VERSION = "0.3.45";
   const CONFIG_KEY = "murdoku-general:config:v1";
   const PROGRESS_KEY = "murdoku-general:progress:v1";
   const LAYOUT_KEY = "murdoku-general:layout:v1";
@@ -93,7 +93,7 @@ function rgbaFromHex(hex, alpha=.18){
     playScreen: $("#playScreen"), sidebar: $("#sidebar"), sidebarResizer: $("#sidebarResizer"), topbarResizer: $("#topbarResizer"),
     suspectList: $("#suspectList"), redistributeColors: $("#redistributeColorsBtn"), noteSymbols: $("#noteSymbols"), placedCount: $("#placedCount"), boardArea: $("#boardArea"), boardWrap: $("#boardWrap"), boardImage: $("#boardImage"), boardPlaceholder: $("#boardPlaceholder"), grid: $("#gridOverlay"), rowLabels: $("#rowLabels"), colLabels: $("#colLabels"),
     undo: $("#undoBtn"), redo: $("#redoBtn"), clearSelected: $("#clearSelectedBtn"), eraser: $("#eraserBtn"), reset: $("#resetBtn"), coords: $("#coordsBtn"), darkView: $("#darkViewBtn"), help: $("#helpBtn"), check: $("#checkBtn"), availableCells: $("#availableCellsCount"), availableTotal: $("#availableCellsTotal"), status: $("#status"), exportProgress: $("#exportProgressBtn"), importProgress: $("#importProgressInput"), helpDialog: $("#helpDialog"),
-    setupScreen: $("#setupScreen"), setupFormResizer: $("#setupFormResizer"), setupHelp: $("#setupHelpBtn"), setupHelpDialog: $("#setupHelpDialog"), newPuzzle: $("#newPuzzleBtn"), cancelSetup: $("#cancelSetupBtn"), saveSetup: $("#saveSetupBtn"), setupTitle: $("#setupTitle"), setupRows: $("#setupRows"), setupCols: $("#setupCols"), setupSuspectCount: $("#setupSuspectCount"), applySuspectCount: $("#applySuspectCountBtn"), setupImageUrl: $("#setupImageUrl"), setupImageFile: $("#setupImageFile"), clearImage: $("#clearImageBtn"), imageStorageNote: $("#imageStorageNote"),
+    setupScreen: $("#setupScreen"), setupFormResizer: $("#setupFormResizer"), setupHelp: $("#setupHelpBtn"), setupHelpDialog: $("#setupHelpDialog"), loadExample: $("#loadExampleBtn"), newPuzzle: $("#newPuzzleBtn"), cancelSetup: $("#cancelSetupBtn"), saveSetup: $("#saveSetupBtn"), setupTitle: $("#setupTitle"), setupRows: $("#setupRows"), setupCols: $("#setupCols"), setupSuspectCount: $("#setupSuspectCount"), applySuspectCount: $("#applySuspectCountBtn"), setupImageUrl: $("#setupImageUrl"), setupImageFile: $("#setupImageFile"), clearImage: $("#clearImageBtn"), imageStorageNote: $("#imageStorageNote"),
     annotationScale: $("#annotationScale"), annotationScaleValue: $("#annotationScaleValue"), editorModeTip: $("#editorModeTip"), editorModes: $("#editorModeButtons"), perspectiveTools: $("#perspectiveTools"), resetPerspective: $("#resetPerspectiveBtn"), applyPerspective: $("#applyPerspectiveBtn"), perspectiveStatus: $("#perspectiveStatus"), blockedTools: $("#blockedTools"), clearBlocked: $("#clearBlockedBtn"),
     previewArea: $("#setupPreviewArea"), previewWrap: $("#setupPreviewWrap"), previewImage: $("#setupPreviewImage"), previewPlaceholder: $("#setupPreviewPlaceholder"), perspectiveOverlay: $("#perspectiveOverlay"), perspectivePolygon: $("#perspectivePolygon"), perspectiveHandles: $("#perspectiveHandles"), setupGridBox: $("#setupGridBox"), setupGrid: $("#setupGridOverlay"), previewModeLabel: $("#previewModeLabel"), previewInfo: $("#previewInfo")
   };
@@ -254,6 +254,7 @@ function rgbaFromHex(hex, alpha=.18){
     safeParse(storageGet(PROGRESS_KEY), blankProgress(config)), config), config);
   let undoStack=[], redoStack=[], gesture=null, eraseMode=false;
   let draft=null, setupMode="calibrate", setupGesture=null, calibrationDrag=null, perspectiveCorners=null, perspectiveDrag=null, perspectiveBusy=false;
+  let pendingExampleProgress=null;
 
   function remapProgressIds(source,map){
     const p=clone(source&&typeof source==="object"?source:{});
@@ -1065,8 +1066,25 @@ function rgbaFromHex(hex, alpha=.18){
     return name.replace(/\.[a-z0-9]{1,8}$/i,"").trim();
   }
   function applyImageTitle(value){if(!draft)return;const current=el.setupTitle.value;if(!titleIsUnset(current))return;const title=imageNameToTitle(value);if(!title)return;draft.title=title;el.setupTitle.value=title}
+  function loadExamplePuzzle(){
+    const example=window.MURDOKU_EXAMPLE_TREASURE_HUNT_24X24;
+    if(!example || !example.puzzle){
+      alert("The example puzzle is unavailable. Please reload the application.");
+      return;
+    }
+    if(!confirm("Load the example 'The Treasure Hunt 24x24'?\n\nUnsaved editor changes will be lost. The current saved puzzle will be replaced only when you click Save & Play."))return;
+    // Work on a draft: Cancel leaves the saved puzzle and progress intact.
+    draft=normalizeConfig(clone(example.puzzle));
+    pendingExampleProgress=clone(example.progress||{});
+    setupGesture=null;
+    setupMode="calibrate";
+    el.setupImageFile.value="";
+    populateSetup();
+    requestAnimationFrame(fitSetupPreview);
+  }
   function newPuzzle(){
     if(!confirm("Start a new puzzle? Unsaved changes in New / Edit will be lost."))return;
+    pendingExampleProgress=null;
     draft=defaultConfig();
     draft.title="";
     draft.blockedCells=[];
@@ -1075,8 +1093,8 @@ function rgbaFromHex(hex, alpha=.18){
     el.setupImageFile.value="";
     populateSetup();
   }
-  function openSetup(){eraseMode=false;draft=clone(config);setupMode="calibrate";populateSetup();el.setupScreen.classList.remove("hidden");requestAnimationFrame(fitSetupPreview)}
-  function closeSetup(){el.setupScreen.classList.add("hidden");draft=null;requestAnimationFrame(fitBoard)}
+  function openSetup(){eraseMode=false;pendingExampleProgress=null;draft=clone(config);setupMode="calibrate";populateSetup();el.setupScreen.classList.remove("hidden");requestAnimationFrame(fitSetupPreview)}
+  function closeSetup(){el.setupScreen.classList.add("hidden");draft=null;pendingExampleProgress=null;requestAnimationFrame(fitBoard)}
   function populateSetup(){
     el.setupTitle.value=draft.title;
     el.setupRows.value=draft.rows;
@@ -1156,11 +1174,12 @@ function rgbaFromHex(hex, alpha=.18){
   function moveCalibration(ev){if(!calibrationDrag||ev.pointerId!==calibrationDrag.id)return;const {edge,rect,start}=calibrationDrag,x=(ev.clientX-rect.left)/rect.width*100,y=(ev.clientY-rect.top)/rect.height*100;if(edge==="left")draft.gridInset.left=clampNum(x,0,90-start.right,start.left);if(edge==="right")draft.gridInset.right=clampNum(100-x,0,90-start.left,start.right);if(edge==="top")draft.gridInset.top=clampNum(y,0,90-start.bottom,start.top);if(edge==="bottom")draft.gridInset.bottom=clampNum(100-y,0,90-start.top,start.bottom);positionSetupGridBox()}
   function endCalibration(){calibrationDrag=null;removeEventListener("pointermove",moveCalibration)}
   function structuralSignature(cfg){return JSON.stringify({rows:cfg.rows,cols:cfg.cols,ids:cfg.suspects.map(s=>s.id),victimIndex:cfg.victimIndex})}
-  function saveSetup(){syncDraftBasics();const oldSig=structuralSignature(config),newCfg=normalizeConfig(draft),newSig=structuralSignature(newCfg);config=newCfg;const saved=persistConfig();if(oldSig!==newSig){progress=blankProgress(config);undoStack=[];redoStack=[]}else progress=sanitizeProgress(progress,config);persistProgress();closeSetup();loadPlay();setStatus(saved?"Puzzle saved.":"The puzzle is running, but the image/settings were too large for localStorage. Export the puzzle JSON.",saved?"good":"error")}
+  function saveSetup(){syncDraftBasics();const oldSig=structuralSignature(config),newCfg=normalizeConfig(draft),newSig=structuralSignature(newCfg);config=newCfg;const saved=persistConfig();if(pendingExampleProgress!==null){progress=sanitizeProgress(pendingExampleProgress,config);undoStack=[];redoStack=[]}else if(oldSig!==newSig){progress=blankProgress(config);undoStack=[];redoStack=[]}else progress=sanitizeProgress(progress,config);persistProgress();closeSetup();loadPlay();setStatus(saved?"Puzzle saved.":"The puzzle is running, but the image/settings were too large for localStorage. Export the puzzle JSON.",saved?"good":"error")}
 
   function wireSetup(){
     el.setupBtn.addEventListener("click",openSetup);
     el.setupHelp.addEventListener("click",()=>el.setupHelpDialog.showModal());
+    el.loadExample.addEventListener("click",loadExamplePuzzle);
     el.newPuzzle.addEventListener("click",newPuzzle);
     el.cancelSetup.addEventListener("click",closeSetup);
     el.saveSetup.addEventListener("click",saveSetup);

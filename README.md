@@ -2,7 +2,7 @@
 
 An interactive browser-based companion for **solving Murdoku puzzles**. Keep track of suspects, possible positions, deductions and notes while you work out the solution yourself. **This is an assistant, not an automatic solver.**
 
-**Current version:** `v0.3.44`
+**Current version:** `v0.3.45`
 
 ## Run the app
 
@@ -45,7 +45,15 @@ Drag the **right edge of the editor tools panel** horizontally to adjust its wid
 
 The **Marker & symbol size** control is in **Play**, under the Note Symbols panel.
 
-### 5. Finish
+### 5. Load the built-in example
+
+Choose **Load example** beside **New Puzzle** in the New / Edit header to load **The Treasure Hunt 24x24** (24 × 24 grid, 24 suspects and 97 blocked cells). A confirmation is shown before replacing your unsaved editor changes. The current saved puzzle is preserved until you choose **Save & Play**. Choose **Cancel** if you want to keep your existing puzzle.
+
+The original JSON is included in [`examples/The Treasure Hunt 24x24.json`](examples/The%20Treasure%20Hunt%2024x24.json). The button also works when the app is opened as a local `file://` page, with no server.
+
+**Blocked cells without an image:** When no background image is selected, blocked cells use a solid dark gray fill both in the editor and during Play. Puzzles with a background image retain the existing translucent blocked-cell appearance. The built-in example includes an image URL; remove that image to see the new no-image treatment.
+
+### 6. Finish
 
 - **Save & Play** saves the setup and returns to the board.
 - **Cancel** leaves the editor without saving the latest changes.

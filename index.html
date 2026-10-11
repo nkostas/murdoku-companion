@@ -14,7 +14,7 @@
     </div>
     <div class="topbar-actions">
       <button id="setupBtn" class="ghost compact" type="button">New / Edit</button>
-      <span id="versionBadge" class="version-badge">v0.3.44</span>
+      <span id="versionBadge" class="version-badge">v0.3.45</span>
     </div>
     <div id="topbarResizer" class="topbar-resizer" role="separator" aria-orientation="horizontal" tabindex="0" title="Drag to resize height"></div>
   </header>
@@ -129,6 +129,7 @@
       </div>
       <div class="setup-header-actions">
         <button id="setupHelpBtn" class="ghost" type="button" aria-haspopup="dialog">Help</button>
+        <button id="loadExampleBtn" type="button" title="Load The Treasure Hunt 24x24 example into the editor">Load example</button>
         <button id="newPuzzleBtn" type="button">New Puzzle</button>
         <button id="cancelSetupBtn" class="ghost" type="button">Cancel</button>
         <button id="saveSetupBtn" class="primary" type="button">Save & Play</button>
@@ -245,8 +246,11 @@
         <h3>4. Tools panel</h3>
         <p>Drag the right edge of the editor tools panel to resize it independently from the Play suspect sidebar. The width is remembered.</p>
         <p>Set Marker &amp; symbol size in Play, below the Note Symbols list (70%–150%).</p>
-        <h3>5. Finish</h3>
+        <h3>5. Example puzzle</h3>
+        <p>Choose <strong>Load example</strong> to load <strong>The Treasure Hunt 24x24</strong> into the editor. Confirm the action first. You can review or adjust it, then click <strong>Save &amp; Play</strong> to replace the current puzzle and start with the example progress. <strong>Cancel</strong> keeps the current saved puzzle.</p>
+        <h3>6. Finish</h3>
         <p><strong>Save &amp; Play</strong> saves the setup and returns to the board. <strong>Cancel</strong> discards unsaved edits. <strong>New Puzzle</strong> starts a blank setup. Changing the grid size or suspect IDs can clear existing play progress, so Export a backup beforehand.</p>
+        <p>Without a background image, blocked cells are shown in dark gray in the editor and on the Play board. With an image, their regular subtle overlay is used.</p>
       </div>
       <button class="primary guide-close" value="close">Close</button>
     </form>
@@ -299,6 +303,7 @@
       </div>
     </form>
   </dialog>
+  <script src="example-puzzle.js"></script>
   <script src="app.js"></script>
 
 </body>
