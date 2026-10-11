@@ -987,3 +987,48 @@ body.dark-view .rename-dialog input {background:#293440;color:var(--text)}
   .user-guide-dialog .guide-dialog-card { padding:12px 14px; }
   .user-guide-dialog .dialog-head h2 { font-size:1rem; }
 }
+
+
+/* v0.3.44 — resizeable editor, vertical modes, play marker size */
+:root{--editor-panel-width:390px}
+.setup-body{
+  position:relative;
+  grid-template-columns:minmax(270px,var(--editor-panel-width)) minmax(0,1fr) !important;
+}
+.setup-form-resizer{
+  position:absolute;
+  top:7px;bottom:7px;
+  left:calc(10.5px + var(--editor-panel-width));
+  width:12px;
+  transform:translateX(-50%);
+  z-index:12;
+  cursor:ew-resize;
+  touch-action:none;
+  border-radius:6px;
+}
+.setup-form-resizer:hover,.setup-form-resizer:focus-visible,
+body.resizing-editor-panel .setup-form-resizer{
+  background:rgba(47,113,93,.22);
+  outline:none;
+}
+body.resizing-editor-panel{cursor:ew-resize;user-select:none}
+.editor-mode-list{display:flex;flex-direction:column;gap:7px}
+.editor-mode-row{display:grid;grid-template-columns:minmax(112px,1fr) minmax(0,1.7fr);align-items:center;gap:8px;min-height:38px}
+.editor-mode-row > button[data-mode]{text-align:left;width:100%;height:100%;min-height:36px;padding:8px 11px}
+.editor-mode-row > button.active{background:var(--green2);border-color:var(--green);color:var(--text)}
+.editor-mode-actions{display:flex;gap:5px;align-items:center;justify-content:flex-end;min-width:0}
+.editor-mode-actions button{padding:7px 6px;min-width:0;font-size:.74rem;white-space:normal;line-height:1.15}
+.editor-mode-tip{margin-top:8px!important}
+.play-marker-size{flex:none;border-top:1px solid var(--line);padding:10px 4px 4px;margin-top:6px}
+.play-marker-size label{display:block;font-size:.68rem;font-weight:900;letter-spacing:.03em;margin:0 0 5px 2px;color:var(--muted)}
+.play-marker-size .annotation-scale-row{grid-template-columns:minmax(0,1fr) 48px;gap:9px;align-items:center}
+.play-marker-size input[type=range]{width:100%;min-width:0;accent-color:var(--green);padding:0;background:transparent}
+.play-marker-size output{font-size:.75rem;color:var(--text)}
+@media(max-width:700px){
+  .setup-body{grid-template-columns:1fr !important}
+  .setup-form-resizer{display:none}
+}
+@media(max-width:380px){
+  .editor-mode-row{grid-template-columns:minmax(100px,1fr) minmax(0,1.35fr)}
+  .editor-mode-actions button{font-size:.66rem}
+}

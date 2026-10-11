@@ -2,7 +2,7 @@
 
 An interactive browser-based companion for **solving Murdoku puzzles**. Keep track of suspects, possible positions, deductions and notes while you work out the solution yourself. **This is an assistant, not an automatic solver.**
 
-**Current version:** `v0.3.43`
+**Current version:** `v0.3.44`
 
 ## Run the app
 
@@ -32,14 +32,18 @@ Add a background using **Image URL** or **Choose local image**. Local images are
 | Mode | How to use it |
 | --- | --- |
 | **Perspective** | Drag the TL, TR, BR and BL handles onto the four corners of a grid photographed at an angle, then select **Rectify image**. **Reset corners** starts over. |
-| **Calibration** | Drag the four grid edges in the preview, or enter exact **Left / Top / Right / Bottom %** values. Align the grid lines with the image. |
+| **Calibration** | Drag the four grid edges directly in the preview to align the grid lines with the image. The numeric inset fields are no longer shown. |
 | **Blocked cells** | Left-click an empty cell to block it, or a blocked cell to unblock it. **Left drag** repeats the first cell's add/remove action across the dragged cells. **Right click** is disabled. Use **Clear all blocked cells** to start again. |
 
 Blocked cells are optional; use them only when a puzzle location is known to be unavailable.
 
-### 4. Marker & symbol size
+### 4. Editor layout
 
-The **Marker & symbol size** slider is always visible in New / Edit. It scales suspect letters and note symbols on the board from **70% to 150%**.
+The three Editor modes are arranged vertically. Their related action buttons appear to the right only for the active mode: **Rectify image** / **Reset corners** for Perspective, and **Clear all** for Blocked cells.
+
+Drag the **right edge of the editor tools panel** horizontally to adjust its width independently of the Play suspect sidebar. The width is saved in this browser.
+
+The **Marker & symbol size** control is in **Play**, under the Note Symbols panel.
 
 ### 5. Finish
 
@@ -95,6 +99,7 @@ At most one suspect or note symbol can be placed in each row and column; some ro
 
 ### 5. View options
 
+- **Marker & symbol size** below Note Symbols in the left panel adjusts the size of board annotations immediately, from **70% to 150%**. It is saved with the puzzle.
 - **Coordinates** displays row/column coordinates.
 - **Dark view / Light view** changes the interface theme, without altering the puzzle image.
 - The sidebar width and top bar height can be resized by dragging their borders.

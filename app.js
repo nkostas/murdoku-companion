@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const VERSION = "0.3.43";
+  const VERSION = "0.3.44";
   const CONFIG_KEY = "murdoku-general:config:v1";
   const PROGRESS_KEY = "murdoku-general:progress:v1";
   const LAYOUT_KEY = "murdoku-general:layout:v1";
@@ -93,8 +93,8 @@ function rgbaFromHex(hex, alpha=.18){
     playScreen: $("#playScreen"), sidebar: $("#sidebar"), sidebarResizer: $("#sidebarResizer"), topbarResizer: $("#topbarResizer"),
     suspectList: $("#suspectList"), redistributeColors: $("#redistributeColorsBtn"), noteSymbols: $("#noteSymbols"), placedCount: $("#placedCount"), boardArea: $("#boardArea"), boardWrap: $("#boardWrap"), boardImage: $("#boardImage"), boardPlaceholder: $("#boardPlaceholder"), grid: $("#gridOverlay"), rowLabels: $("#rowLabels"), colLabels: $("#colLabels"),
     undo: $("#undoBtn"), redo: $("#redoBtn"), clearSelected: $("#clearSelectedBtn"), eraser: $("#eraserBtn"), reset: $("#resetBtn"), coords: $("#coordsBtn"), darkView: $("#darkViewBtn"), help: $("#helpBtn"), check: $("#checkBtn"), availableCells: $("#availableCellsCount"), availableTotal: $("#availableCellsTotal"), status: $("#status"), exportProgress: $("#exportProgressBtn"), importProgress: $("#importProgressInput"), helpDialog: $("#helpDialog"),
-    setupScreen: $("#setupScreen"), setupHelp: $("#setupHelpBtn"), setupHelpDialog: $("#setupHelpDialog"), newPuzzle: $("#newPuzzleBtn"), cancelSetup: $("#cancelSetupBtn"), saveSetup: $("#saveSetupBtn"), setupTitle: $("#setupTitle"), setupRows: $("#setupRows"), setupCols: $("#setupCols"), setupSuspectCount: $("#setupSuspectCount"), applySuspectCount: $("#applySuspectCountBtn"), setupImageUrl: $("#setupImageUrl"), setupImageFile: $("#setupImageFile"), clearImage: $("#clearImageBtn"), imageStorageNote: $("#imageStorageNote"),
-    insetLeft: $("#insetLeft"), insetTop: $("#insetTop"), insetRight: $("#insetRight"), insetBottom: $("#insetBottom"), annotationScale: $("#annotationScale"), annotationScaleValue: $("#annotationScaleValue"), editorModes: $("#editorModeButtons"), perspectiveTools: $("#perspectiveTools"), resetPerspective: $("#resetPerspectiveBtn"), applyPerspective: $("#applyPerspectiveBtn"), perspectiveStatus: $("#perspectiveStatus"), blockedTools: $("#blockedTools"), clearBlocked: $("#clearBlockedBtn"),
+    setupScreen: $("#setupScreen"), setupFormResizer: $("#setupFormResizer"), setupHelp: $("#setupHelpBtn"), setupHelpDialog: $("#setupHelpDialog"), newPuzzle: $("#newPuzzleBtn"), cancelSetup: $("#cancelSetupBtn"), saveSetup: $("#saveSetupBtn"), setupTitle: $("#setupTitle"), setupRows: $("#setupRows"), setupCols: $("#setupCols"), setupSuspectCount: $("#setupSuspectCount"), applySuspectCount: $("#applySuspectCountBtn"), setupImageUrl: $("#setupImageUrl"), setupImageFile: $("#setupImageFile"), clearImage: $("#clearImageBtn"), imageStorageNote: $("#imageStorageNote"),
+    annotationScale: $("#annotationScale"), annotationScaleValue: $("#annotationScaleValue"), editorModeTip: $("#editorModeTip"), editorModes: $("#editorModeButtons"), perspectiveTools: $("#perspectiveTools"), resetPerspective: $("#resetPerspectiveBtn"), applyPerspective: $("#applyPerspectiveBtn"), perspectiveStatus: $("#perspectiveStatus"), blockedTools: $("#blockedTools"), clearBlocked: $("#clearBlockedBtn"),
     previewArea: $("#setupPreviewArea"), previewWrap: $("#setupPreviewWrap"), previewImage: $("#setupPreviewImage"), previewPlaceholder: $("#setupPreviewPlaceholder"), perspectiveOverlay: $("#perspectiveOverlay"), perspectivePolygon: $("#perspectivePolygon"), perspectiveHandles: $("#perspectiveHandles"), setupGridBox: $("#setupGridBox"), setupGrid: $("#setupGridOverlay"), previewModeLabel: $("#previewModeLabel"), previewInfo: $("#previewInfo")
   };
 
@@ -716,7 +716,7 @@ function rgbaFromHex(hex, alpha=.18){
     el.redo.disabled=!redoStack.length;
     requestAnimationFrame(fitBoard)
   }
-  function loadPlay(){setImageElement(el.boardImage,el.boardWrap,el.boardPlaceholder);applyGridGeometry();buildGrid();buildSuspects();render();}
+  function loadPlay(){el.annotationScale.value=Math.round((config.annotationScale||1)*100);el.annotationScaleValue.value=`${el.annotationScale.value}%`;setImageElement(el.boardImage,el.boardWrap,el.boardPlaceholder);applyGridGeometry();buildGrid();buildSuspects();render();}
 
   function placeSelected(r,c){
     const id=progress.selected;
@@ -878,7 +878,55 @@ function rgbaFromHex(hex, alpha=.18){
   function moveGesture(ev){if(!gesture||ev.pointerId!==gesture.id)return;const cell=gridCellFromPoint(ev.clientX,ev.clientY);if(gesture.button===2||gesture.kind==="eraser"){ev.preventDefault();if(cell)applyGestureCell(cell);return}if(gesture.long)return;const dist=Math.hypot(ev.clientX-gesture.startX,ev.clientY-gesture.startY),moved=cell&&((+cell.dataset.row)!==gesture.startR||(+cell.dataset.col)!==gesture.startC);if(!gesture.dragging&&(dist>=DRAG_THRESHOLD||moved)){gesture.dragging=true;gesture.action=gesture.startHad?"remove":"add";clearTimeout(gesture.timer);$$('.cell.pressing').forEach(x=>x.classList.remove('pressing'));const start=el.grid.querySelector(`[data-row="${gesture.startR}"][data-col="${gesture.startC}"]`);applyGestureCell(start)}if(gesture.dragging&&cell){ev.preventDefault();applyGestureCell(cell)}}
   function endGesture(ev){if(!gesture||ev.pointerId!==gesture.id)return;const g=gesture;gesture=null;clearTimeout(g.timer);$$('.cell.pressing').forEach(x=>x.classList.remove('pressing'));if(g.button===0&&!g.long&&!g.dragging){const action=g.startHad?"remove":"add";if(progress.selected&&canCandidateMark(g.startR,g.startC)){checkpoint();setNote(progress.selected,g.startR,g.startC,"candidate",action);persistProgress();render()}}else if(g.checkpointed){persistProgress();render()}}
 
-  function initResizable(){const prefs=safeParse(storageGet(LAYOUT_KEY),{}) || {};if(prefs.sidebar)document.documentElement.style.setProperty("--sidebar-width",`${prefs.sidebar}px`);if(prefs.topbar)document.documentElement.style.setProperty("--topbar-height",`${prefs.topbar}px`);function begin(kind,ev){if(innerWidth<700||ev.button!==0)return;ev.preventDefault();const sx=ev.clientX,sy=ev.clientY,sw=el.sidebar.getBoundingClientRect().width,sh=el.topbar.getBoundingClientRect().height;function move(e){if(kind==="sidebar"){const w=Math.max(220,Math.min(innerWidth*.68,sw+e.clientX-sx));document.documentElement.style.setProperty("--sidebar-width",`${w}px`);prefs.sidebar=Math.round(w)}else{const h=Math.max(32,Math.min(innerHeight*.28,sh+e.clientY-sy));document.documentElement.style.setProperty("--topbar-height",`${h}px`);prefs.topbar=Math.round(h)}storageSet(LAYOUT_KEY,JSON.stringify(prefs));requestAnimationFrame(fitBoard)}function end(){removeEventListener("pointermove",move);removeEventListener("pointerup",end)}addEventListener("pointermove",move);addEventListener("pointerup",end)}el.sidebarResizer.addEventListener("pointerdown",e=>begin("sidebar",e));el.topbarResizer.addEventListener("pointerdown",e=>begin("topbar",e))}
+  function initResizable(){const prefs=safeParse(storageGet(LAYOUT_KEY),{}) || {};if(prefs.sidebar)document.documentElement.style.setProperty("--sidebar-width",`${prefs.sidebar}px`);if(prefs.topbar)document.documentElement.style.setProperty("--topbar-height",`${prefs.topbar}px`);function begin(kind,ev){if(innerWidth<700||ev.button!==0)return;ev.preventDefault();const sx=ev.clientX,sy=ev.clientY,sw=el.sidebar.getBoundingClientRect().width,sh=el.topbar.getBoundingClientRect().height;function move(e){if(kind==="sidebar"){const w=Math.max(220,Math.min(innerWidth*.68,sw+e.clientX-sx));document.documentElement.style.setProperty("--sidebar-width",`${w}px`);prefs.sidebar=Math.round(w)}else{const h=Math.max(32,Math.min(innerHeight*.28,sh+e.clientY-sy));document.documentElement.style.setProperty("--topbar-height",`${h}px`);prefs.topbar=Math.round(h)}storageSet(LAYOUT_KEY,JSON.stringify({...safeParse(storageGet(LAYOUT_KEY),{}),[kind==="sidebar"?"sidebar":"topbar"]:kind==="sidebar"?prefs.sidebar:prefs.topbar}));requestAnimationFrame(fitBoard)}function end(){removeEventListener("pointermove",move);removeEventListener("pointerup",end)}addEventListener("pointermove",move);addEventListener("pointerup",end)}el.sidebarResizer.addEventListener("pointerdown",e=>begin("sidebar",e));el.topbarResizer.addEventListener("pointerdown",e=>begin("topbar",e))}
+
+  function initSetupResizable(){
+    const prefs=safeParse(storageGet(LAYOUT_KEY),{}) || {};
+    const applyWidth=(width)=>{
+      const max=Math.max(270,Math.min(760,innerWidth-300));
+      const value=Math.max(270,Math.min(max,width));
+      document.documentElement.style.setProperty("--editor-panel-width",`${value}px`);
+      return value;
+    };
+    applyWidth(Number(prefs.editorPanel)||390);
+    const handle=el.setupFormResizer;
+    let drag=null;
+    handle.addEventListener("pointerdown",ev=>{
+      if(ev.button!==0||innerWidth<=700)return;
+      ev.preventDefault();
+      drag={id:ev.pointerId,startX:ev.clientX,startWidth:el.setupScreen.querySelector(".setup-form").getBoundingClientRect().width};
+      handle.setPointerCapture(ev.pointerId);
+      document.body.classList.add("resizing-editor-panel");
+    });
+    handle.addEventListener("pointermove",ev=>{
+      if(!drag||ev.pointerId!==drag.id)return;
+      const width=applyWidth(drag.startWidth+ev.clientX-drag.startX);
+      prefs.editorPanel=Math.round(width);
+      requestAnimationFrame(fitSetupPreview);
+    });
+    const finish=ev=>{
+      if(!drag||ev.pointerId!==drag.id)return;
+      drag=null;
+      document.body.classList.remove("resizing-editor-panel");
+      if(handle.hasPointerCapture(ev.pointerId))handle.releasePointerCapture(ev.pointerId);
+      storageSet(LAYOUT_KEY,JSON.stringify({...safeParse(storageGet(LAYOUT_KEY),{}),editorPanel:prefs.editorPanel}));
+      requestAnimationFrame(fitSetupPreview);
+    };
+    handle.addEventListener("pointerup",finish);
+    handle.addEventListener("pointercancel",finish);
+    handle.addEventListener("keydown",ev=>{
+      if(ev.key!=="ArrowLeft"&&ev.key!=="ArrowRight")return;
+      ev.preventDefault();
+      const width=applyWidth((Number(prefs.editorPanel)||390)+(ev.key==="ArrowRight"?20:-20));
+      prefs.editorPanel=Math.round(width);
+      storageSet(LAYOUT_KEY,JSON.stringify({...safeParse(storageGet(LAYOUT_KEY),{}),editorPanel:prefs.editorPanel}));
+      requestAnimationFrame(fitSetupPreview);
+    });
+    addEventListener("resize",()=>{
+      if(innerWidth>700)applyWidth(Number(prefs.editorPanel)||390);
+      if(!el.setupScreen.classList.contains("hidden"))requestAnimationFrame(fitSetupPreview);
+    });
+  }
 
   function cornersFromInset(inset){
     const i=inset||{left:0,top:0,right:0,bottom:0};
@@ -1034,13 +1082,10 @@ function rgbaFromHex(hex, alpha=.18){
     el.setupRows.value=draft.rows;
     el.setupCols.value=draft.cols;
     el.setupSuspectCount.value=draft.suspects.length;
-    el.annotationScale.value=Math.round((draft.annotationScale||1)*100);
-    el.annotationScaleValue.value=`${el.annotationScale.value}%`;
     el.setupImageUrl.value=draft.image.type==="url"?draft.image.value:"";
     el.imageStorageNote.textContent=draft.image.type==="data"
       ? `Local image: ${draft.image.name||"embedded"}`
       : (draft.image.type==="url"?"Using image URL.":"No image.");
-    syncInsetInputs();
     setSetupImage();
     buildSetupGrid();
     resetPerspectiveCorners();
@@ -1053,7 +1098,6 @@ function rgbaFromHex(hex, alpha=.18){
     if(!typedTitle&&imageTitle)el.setupTitle.value=imageTitle;
     draft.rows=clampInt(el.setupRows.value,1,60,draft.rows);
     draft.cols=clampInt(el.setupCols.value,1,60,draft.cols);
-    draft.annotationScale=clampNum((+el.annotationScale.value||100)/100,0.7,1.5,1);
     el.setupRows.value=draft.rows;
     el.setupCols.value=draft.cols;
     draft.blockedCells=normalizeCells(draft.blockedCells,draft.rows,draft.cols);
@@ -1077,19 +1121,39 @@ function rgbaFromHex(hex, alpha=.18){
     buildSetupGrid();
     fitSetupPreview();
   }
-  function syncInsetInputs(){el.insetLeft.value=draft.gridInset.left.toFixed(2);el.insetTop.value=draft.gridInset.top.toFixed(2);el.insetRight.value=draft.gridInset.right.toFixed(2);el.insetBottom.value=draft.gridInset.bottom.toFixed(2)}
-  function readInsetInputs(){draft.gridInset.left=clampNum(el.insetLeft.value,0,45,0);draft.gridInset.top=clampNum(el.insetTop.value,0,45,0);draft.gridInset.right=clampNum(el.insetRight.value,0,45,0);draft.gridInset.bottom=clampNum(el.insetBottom.value,0,45,0);ensureInsetRoom();syncInsetInputs();positionSetupGridBox()}
   function ensureInsetRoom(){if(draft.gridInset.left+draft.gridInset.right>90)draft.gridInset.right=90-draft.gridInset.left;if(draft.gridInset.top+draft.gridInset.bottom>90)draft.gridInset.bottom=90-draft.gridInset.top}
   function setSetupImage(){const src=imageSource(draft);el.previewWrap.classList.toggle("has-image",!!src);if(!src){el.previewImage.removeAttribute("src");el.previewPlaceholder.style.display="grid";fitSetupPreview();return}el.previewPlaceholder.style.display="none";el.previewImage.src=src}
   function fitSetupPreview(){const rect=el.previewArea.getBoundingClientRect();if(rect.width<2||rect.height<2)return;let ratio=draft.cols/draft.rows;if(imageSource(draft)&&el.previewImage.naturalWidth&&el.previewImage.naturalHeight)ratio=el.previewImage.naturalWidth/el.previewImage.naturalHeight;let w=Math.min(rect.width-16,(rect.height-16)*ratio),h=w/ratio;if(h>rect.height-16){h=rect.height-16;w=h*ratio}el.previewWrap.style.width=`${Math.max(1,Math.floor(w))}px`;el.previewWrap.style.height=`${Math.max(1,Math.floor(h))}px`;positionSetupGridBox();renderPerspectiveOverlay()}
   function positionSetupGridBox(){if(!draft)return;const i=draft.gridInset;el.setupGridBox.style.left=`${i.left}%`;el.setupGridBox.style.top=`${i.top}%`;el.setupGridBox.style.right=`${i.right}%`;el.setupGridBox.style.bottom=`${i.bottom}%`;el.previewInfo.textContent=`${draft.rows} × ${draft.cols} · ${draft.suspects.length} suspects`}
   function buildSetupGrid(){el.setupGrid.innerHTML="";el.setupGrid.style.gridTemplateColumns=`repeat(${draft.cols},1fr)`;el.setupGrid.style.gridTemplateRows=`repeat(${draft.rows},1fr)`;const blocked=new Set(draft.blockedCells.map(([r,c])=>cellKey(r,c)));for(let r=1;r<=draft.rows;r++)for(let c=1;c<=draft.cols;c++){const d=document.createElement("div");d.className="setup-cell";d.dataset.row=r;d.dataset.col=c;const k=cellKey(r,c);if(blocked.has(k))d.classList.add("blocked");el.setupGrid.appendChild(d)}positionSetupGridBox()}
-  function setSetupMode(mode){setupMode=mode;const perspective=mode==="perspective";$$('#editorModeButtons button').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));el.perspectiveTools.classList.toggle("hidden",!perspective);el.blockedTools.classList.toggle("hidden",mode!=="blocked");el.setupGridBox.classList.toggle("calibrate",mode==="calibrate");el.setupGridBox.classList.toggle("perspective-hidden",perspective);el.perspectiveOverlay.classList.toggle("hidden",!perspective);el.perspectiveHandles.classList.toggle("hidden",!perspective);el.previewModeLabel.textContent=perspective?"Perspective correction":mode==="calibrate"?"Grid calibration":"Blocked cells";if(perspective){if(!perspectiveCorners)resetPerspectiveCorners();renderPerspectiveOverlay()}}
+  function setSetupMode(mode){
+    setupMode=mode;
+    const perspective=mode==="perspective";
+    $$('#editorModeButtons button[data-mode]').forEach(b=>{
+      const active=b.dataset.mode===mode;
+      b.classList.toggle("active",active);
+      b.setAttribute("aria-pressed",String(active));
+    });
+    el.perspectiveTools.classList.toggle("hidden",!perspective);
+    el.blockedTools.classList.toggle("hidden",mode!=="blocked");
+    el.perspectiveStatus.classList.toggle("hidden",!perspective);
+    el.editorModeTip.textContent=perspective
+      ? "Drag the four corners to the puzzle grid corners, then use Rectify image. The corrected image follows the Columns : Rows ratio."
+      : mode==="calibrate"
+        ? "Drag the four grid edges directly on the preview to align the grid."
+        : "Left click or drag: add blocks starting from a free cell, or remove them starting from a blocked cell. Right click is disabled.";
+    el.setupGridBox.classList.toggle("calibrate",mode==="calibrate");
+    el.setupGridBox.classList.toggle("perspective-hidden",perspective);
+    el.perspectiveOverlay.classList.toggle("hidden",!perspective);
+    el.perspectiveHandles.classList.toggle("hidden",!perspective);
+    el.previewModeLabel.textContent=perspective?"Perspective correction":mode==="calibrate"?"Grid calibration":"Blocked cells";
+    if(perspective){if(!perspectiveCorners)resetPerspectiveCorners();renderPerspectiveOverlay()}
+  }
   function setupCellFromTarget(target){const c=target?.closest?.(".setup-cell");return c&&el.setupGrid.contains(c)?c:null}
   function setupCellFromPoint(x,y){return setupCellFromTarget(document.elementFromPoint(x,y))}
   function applyBlockedCell(cell,action=setupGesture?.action||"paint"){if(!cell)return;const r=+cell.dataset.row,c=+cell.dataset.col,k=cellKey(r,c);if(setupGesture?.visited?.has(k))return;setupGesture?.visited?.add(k);const idx=draft.blockedCells.findIndex(p=>p[0]===r&&p[1]===c);if(action==="paint"&&idx<0)draft.blockedCells.push([r,c]);if(action==="erase"&&idx>=0)draft.blockedCells.splice(idx,1);buildSetupGrid()}
   function startCalibration(edge,ev){if(setupMode!=="calibrate")return;ev.preventDefault();const rect=el.previewWrap.getBoundingClientRect(),start=clone(draft.gridInset);calibrationDrag={edge,id:ev.pointerId,rect,start};addEventListener("pointermove",moveCalibration);addEventListener("pointerup",endCalibration,{once:true})}
-  function moveCalibration(ev){if(!calibrationDrag||ev.pointerId!==calibrationDrag.id)return;const {edge,rect,start}=calibrationDrag,x=(ev.clientX-rect.left)/rect.width*100,y=(ev.clientY-rect.top)/rect.height*100;if(edge==="left")draft.gridInset.left=clampNum(x,0,90-start.right,start.left);if(edge==="right")draft.gridInset.right=clampNum(100-x,0,90-start.left,start.right);if(edge==="top")draft.gridInset.top=clampNum(y,0,90-start.bottom,start.top);if(edge==="bottom")draft.gridInset.bottom=clampNum(100-y,0,90-start.top,start.bottom);syncInsetInputs();positionSetupGridBox()}
+  function moveCalibration(ev){if(!calibrationDrag||ev.pointerId!==calibrationDrag.id)return;const {edge,rect,start}=calibrationDrag,x=(ev.clientX-rect.left)/rect.width*100,y=(ev.clientY-rect.top)/rect.height*100;if(edge==="left")draft.gridInset.left=clampNum(x,0,90-start.right,start.left);if(edge==="right")draft.gridInset.right=clampNum(100-x,0,90-start.left,start.right);if(edge==="top")draft.gridInset.top=clampNum(y,0,90-start.bottom,start.top);if(edge==="bottom")draft.gridInset.bottom=clampNum(100-y,0,90-start.top,start.bottom);positionSetupGridBox()}
   function endCalibration(){calibrationDrag=null;removeEventListener("pointermove",moveCalibration)}
   function structuralSignature(cfg){return JSON.stringify({rows:cfg.rows,cols:cfg.cols,ids:cfg.suspects.map(s=>s.id),victimIndex:cfg.victimIndex})}
   function saveSetup(){syncDraftBasics();const oldSig=structuralSignature(config),newCfg=normalizeConfig(draft),newSig=structuralSignature(newCfg);config=newCfg;const saved=persistConfig();if(oldSig!==newSig){progress=blankProgress(config);undoStack=[];redoStack=[]}else progress=sanitizeProgress(progress,config);persistProgress();closeSetup();loadPlay();setStatus(saved?"Puzzle saved.":"The puzzle is running, but the image/settings were too large for localStorage. Export the puzzle JSON.",saved?"good":"error")}
@@ -1130,8 +1194,6 @@ function rgbaFromHex(hex, alpha=.18){
     });
     el.clearImage.addEventListener("click",()=>{draft.image={type:"none",value:"",name:""};el.setupImageUrl.value="";el.imageStorageNote.textContent="No image.";setSetupImage();resetPerspectiveCorners()});
 
-    [el.insetLeft,el.insetTop,el.insetRight,el.insetBottom].forEach(x=>x.addEventListener("change",readInsetInputs));
-    el.annotationScale.addEventListener("input",()=>{draft.annotationScale=clampNum((+el.annotationScale.value||100)/100,0.7,1.5,1);el.annotationScaleValue.value=`${Math.round(draft.annotationScale*100)}%`;});
     el.editorModes.addEventListener("click",e=>{const b=e.target.closest("button[data-mode]");if(b)setSetupMode(b.dataset.mode)});
     el.resetPerspective.addEventListener("click",resetPerspectiveCorners);
     el.applyPerspective.addEventListener("click",applyPerspectiveCorrection);
@@ -1171,6 +1233,13 @@ function rgbaFromHex(hex, alpha=.18){
   }
 
   function wirePlay(){
+    el.annotationScale.addEventListener("input",()=>{
+      const amount=clampNum((+el.annotationScale.value||100)/100,0.7,1.5,1);
+      config.annotationScale=amount;
+      el.annotationScaleValue.value=`${Math.round(amount*100)}%`;
+      el.boardWrap.style.setProperty("--annotation-scale",String(amount));
+      persistConfig();
+    });
     el.redistributeColors.addEventListener("click", redistributePlayColors);
     el.darkView.addEventListener("click", () => {
       darkViewEnabled = !darkViewEnabled;
@@ -1242,6 +1311,6 @@ function rgbaFromHex(hex, alpha=.18){
   }
 
   el.version.textContent=`v${VERSION}`;
-  updateDarkView();initResizable();wirePlay();wireSetup();loadPlay();
+  updateDarkView();initResizable();initSetupResizable();wirePlay();wireSetup();loadPlay();
   if(!hasSavedConfig)setTimeout(openSetup,150);
 })();

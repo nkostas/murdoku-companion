@@ -14,7 +14,7 @@
     </div>
     <div class="topbar-actions">
       <button id="setupBtn" class="ghost compact" type="button">New / Edit</button>
-      <span id="versionBadge" class="version-badge">v0.3.43</span>
+      <span id="versionBadge" class="version-badge">v0.3.44</span>
     </div>
     <div id="topbarResizer" class="topbar-resizer" role="separator" aria-orientation="horizontal" tabindex="0" title="Drag to resize height"></div>
   </header>
@@ -38,6 +38,13 @@
       <section class="note-symbols-panel" aria-label="Note symbols">
         <div class="note-symbols-title">NOTE SYMBOLS</div>
         <div id="noteSymbols" class="note-symbols"></div>
+      </section>
+      <section class="play-marker-size" aria-label="Marker and symbol size">
+        <label for="annotationScale">Marker &amp; symbol size</label>
+        <div class="annotation-scale-row">
+          <input id="annotationScale" type="range" min="70" max="150" step="5" value="100" />
+          <output id="annotationScaleValue" for="annotationScale">100%</output>
+        </div>
       </section>
       <div id="sidebarResizer" class="sidebar-resizer" role="separator" aria-orientation="vertical" tabindex="0" title="Drag to resize width"></div>
     </aside>
@@ -161,48 +168,33 @@
         </section>
 
         <section class="setup-card">
-          <h3>Grid & editor</h3>
-          <p class="small-note">Drag the four grid edges in the preview or enter exact values.</p>
-          <div class="field-row four">
-            <label>Left %<input id="insetLeft" type="number" min="0" max="45" step="0.01" /></label>
-            <label>Top %<input id="insetTop" type="number" min="0" max="45" step="0.01" /></label>
-            <label>Right %<input id="insetRight" type="number" min="0" max="45" step="0.01" /></label>
-            <label>Bottom %<input id="insetBottom" type="number" min="0" max="45" step="0.01" /></label>
-          </div>
-
+          <h3>Grid &amp; editor</h3>
+          <p class="small-note">Select a mode. In Calibration, drag the four grid edges directly on the preview.</p>
           <h4>Editor mode</h4>
-          <div class="segmented editor-modes" id="editorModeButtons">
-            <button data-mode="perspective" type="button">Perspective</button>
-            <button data-mode="calibrate" class="active" type="button">Calibration</button>
-            <button data-mode="blocked" type="button">Blocked cells</button>
-          </div>
-
-          <div id="perspectiveTools" class="mode-tools hidden">
-            <div class="button-grid two">
-              <button id="resetPerspectiveBtn" type="button">Reset corners</button>
-              <button id="applyPerspectiveBtn" class="primary" type="button">Rectify image</button>
+          <div class="editor-mode-list" id="editorModeButtons">
+            <div class="editor-mode-row" data-mode-row="perspective">
+              <button data-mode="perspective" type="button" aria-pressed="false">Perspective</button>
+              <div id="perspectiveTools" class="editor-mode-actions hidden">
+                <button id="applyPerspectiveBtn" class="primary" type="button">Rectify image</button>
+                <button id="resetPerspectiveBtn" type="button">Reset corners</button>
+              </div>
             </div>
-            <p class="small-note">Drag the four corners to the real corners of the grid. Rectify Image transforms the selected quadrilateral into a rectangle.</p>
-            <p class="small-note">The corrected image uses the Columns : Rows aspect ratio so grid cells are square.</p>
-            <p id="perspectiveStatus" class="small-note perspective-status"></p>
+            <div class="editor-mode-row" data-mode-row="calibrate">
+              <button data-mode="calibrate" class="active" type="button" aria-pressed="true">Calibration</button>
+            </div>
+            <div class="editor-mode-row" data-mode-row="blocked">
+              <button data-mode="blocked" type="button" aria-pressed="false">Blocked cells</button>
+              <div id="blockedTools" class="editor-mode-actions hidden">
+                <button id="clearBlockedBtn" class="danger" type="button">Clear all</button>
+              </div>
+            </div>
           </div>
-
-          <div id="blockedTools" class="mode-tools hidden">
-            <button id="clearBlockedBtn" class="danger full" type="button">Clear all blocked cells</button>
-            <p class="small-note"><strong>Left click / drag:</strong> start on a free cell to add blocks, or start on a blocked cell to remove blocks. <strong>Right click:</strong> disabled.</p>
-            <p class="small-note">Optional. Leave empty if blocked cells are not known.</p>
-          </div>
+          <p id="editorModeTip" class="small-note editor-mode-tip">Drag the four grid edges to align the grid.</p>
+          <p id="perspectiveStatus" class="small-note perspective-status hidden"></p>
         </section>
 
-        <section class="setup-card marker-size-card">
-          <h3>Marker &amp; symbol size</h3>
-          <div class="annotation-scale-row">
-            <input id="annotationScale" type="range" min="70" max="150" step="5" value="100" aria-label="Marker &amp; symbol size" />
-            <output id="annotationScaleValue" for="annotationScale">100%</output>
-          </div>
-          <p class="small-note">Set the size of suspect letters and note symbols on the grid (70%–150%).</p>
-        </section>
       </aside>
+      <div id="setupFormResizer" class="setup-form-resizer" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Resize editor tools width" title="Drag to resize editor tools"></div>
 
       <section class="setup-preview-panel">
         <div class="preview-toolbar">
@@ -247,11 +239,12 @@
         <h3>3. Editor modes</h3>
         <ul>
           <li><strong>Perspective:</strong> Drag the TL, TR, BR and BL corner handles to the photographed grid corners and choose <strong>Rectify image</strong>. Use Reset corners to try again.</li>
-          <li><strong>Calibration:</strong> Align the grid by dragging its edges or adjusting the Left, Top, Right and Bottom percentages.</li>
+          <li><strong>Calibration:</strong> Align the grid by dragging its four edges in the preview.</li>
           <li><strong>Blocked cells:</strong> Left click a free cell to block it; click a blocked cell to unblock it. Left drag repeats the first cell's action throughout the drag. Right click does nothing. Use Clear all blocked cells to reset the blocks.</li>
         </ul>
-        <h3>4. Marker &amp; symbol size</h3>
-        <p>Use the always-visible slider to adjust the grid letters and note symbols from 70% to 150%.</p>
+        <h3>4. Tools panel</h3>
+        <p>Drag the right edge of the editor tools panel to resize it independently from the Play suspect sidebar. The width is remembered.</p>
+        <p>Set Marker &amp; symbol size in Play, below the Note Symbols list (70%–150%).</p>
         <h3>5. Finish</h3>
         <p><strong>Save &amp; Play</strong> saves the setup and returns to the board. <strong>Cancel</strong> discards unsaved edits. <strong>New Puzzle</strong> starts a blank setup. Changing the grid size or suspect IDs can clear existing play progress, so Export a backup beforehand.</p>
       </div>
@@ -285,7 +278,7 @@
         <p><strong>Undo / Redo</strong> affects board actions only, not gender or ribbon changes. <strong>Clear selected suspect</strong> removes the selected suspect's marks. <strong>Reset progress</strong> clears play progress after confirmation.</p>
         <h3>4. Puzzle &amp; display</h3>
         <p><strong>Available positions</strong> counts cells remaining after blocked cells, manual and automatic X marks, and placements. Candidate marks do not reduce this count. <strong>Check</strong> verifies that all suspects have been placed consistently with row, column and blocked-cell rules, not against an official solution.</p>
-        <p>Use <strong>Coordinates</strong> and <strong>Dark / Light view</strong> to adjust the interface. Dark view does not change the puzzle image.</p>
+        <p>Use <strong>Coordinates</strong> and <strong>Dark / Light view</strong> to adjust the interface. Dark view does not change the puzzle image. Use <strong>Marker &amp; symbol size</strong> below Note Symbols to resize grid annotations immediately (70%–150%).</p>
         <h3>5. Export &amp; Import</h3>
         <p>Progress is saved locally when browser storage is available. <strong>Export</strong> downloads the puzzle and its progress in one JSON file named <code>Puzzle Name_YYYYMMDD_HHMM.json</code>. <strong>Import</strong> restores them on the same or another device.</p>
       </div>
